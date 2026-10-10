@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import model.ConfigManager;
 
 public class ElpDeliveries extends Application {
     public static void main(String[] args) {
@@ -27,10 +28,10 @@ public class ElpDeliveries extends Application {
     }
 
     public void start(Stage primaryStage) throws Exception {
-        if (!MainController.configExists()) {
+        if (!ConfigManager.exists()) {
             openSettings();
         }
-        if (!MainController.configExists()) {
+        if (!ConfigManager.exists()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Configuration Missing");
             alert.setContentText("A Database Configuration must be created");

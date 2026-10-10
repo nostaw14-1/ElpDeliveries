@@ -1,16 +1,14 @@
 package controller;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Properties;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.ConfigManager;
 
 public class SettingsController {
 
@@ -29,17 +27,16 @@ public class SettingsController {
         @FXML
         private PasswordField passwordPf;
 
-        private final Properties props = new Properties();
-
         @FXML
         public void initialize() {
                 try {
-                        props.load(new FileInputStream("config.properties"));
-                        ipTf.setText(props.getProperty("server", ""));
-                        portTf.setText(props.getProperty("port", "3306"));
-                        dbTf.setText(props.getProperty("database", ""));
-                        usernameTf.setText(props.getProperty("username", ""));
-                        passwordPf.setText(props.getProperty("password", ""));
+                        if (ConfigManager.exists()) {
+                                ipTf.setText(ConfigManager.getServer());
+                                portTf.setText(ConfigManager.getPort());
+                                dbTf.setText(ConfigManager.getDatabase());
+                                usernameTf.setText(ConfigManager.getUsername());
+                                passwordPf.setText(ConfigManager.getPassword());
+                        }
                 } catch (Exception e) {
                 }
         }
@@ -66,12 +63,11 @@ public class SettingsController {
         @FXML
         private void handleSubmit() {
                 try {
-                        props.setProperty("server", ipTf.getText());
-                        props.setProperty("port", portTf.getText());
-                        props.setProperty("database", dbTf.getText());
-                        props.setProperty("username", usernameTf.getText());
-                        props.setProperty("password", passwordPf.getText());
-                        props.store(new FileOutputStream("config.properties"), "ELP Deliveries Settings");
+                        ConfigManager.save(ipTf.getText(),
+                                        portTf.getText(),
+                                        dbTf.getText(),
+                                        usernameTf.getText(),
+                                        passwordPf.getText());
                         Stage stage = (Stage) ipTf.getScene().getWindow();
                         stage.close();
                 } catch (Exception e) {

@@ -13,26 +13,22 @@ public class DBConnection {
     protected String password;
     protected Connection conn;
 
-    private final Properties props = new Properties();
-    
-
     public DBConnection() {
         try {
-            System.out.println(new java.io.File(".").getAbsolutePath());
-            props.load(new FileInputStream("config.properties"));
-            server = props.getProperty("server", "");
-            database = props.getProperty("database", "");
-            port = props.getProperty("port", "3306");
-            username = props.getProperty("username", "");
-            password = props.getProperty("password", "");
+            server = ConfigManager.getServer();
+            port = ConfigManager.getPort();
+            database = ConfigManager.getDatabase();
+            username = ConfigManager.getUsername();
+            password = ConfigManager.getPassword();
             url = "jdbc:mysql://" + server + ":" + port + "/" + database;
-            System.out.println(url);
-            System.out.println(username);
             conn = DriverManager.getConnection(url, username, password);
-            System.out.println("Conected");
         } catch (Exception e) {
             e.printStackTrace();
         } 
+    }
+
+    public Connection getConnection() {
+        return conn;
     }
 
     public ArrayList<Delivery> getDeliveries(String view, Date date, String fname, String lname, Integer receiptNum, Boolean uncompleted) throws SQLException {

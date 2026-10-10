@@ -25,6 +25,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.Delivery;
+import model.ConfigManager;
 import model.DBConnection;
 
 public class MainController {
@@ -67,10 +68,19 @@ public class MainController {
     @FXML
     private TabPane tabPane;
     private String currentView = "All Deliveries";
-    private DBConnection dao = new DBConnection();
+    private DBConnection dao;
 
     @FXML
     public void initialize() {
+        dao = new DBConnection();
+        if (!ConfigManager.exists()) {
+            openSettings();
+            dao = new DBConnection();
+        }
+        if (dao.getConnection() == null) {
+            openSettings();
+            dao = new DBConnection();
+        }
         deliveryTable.setPlaceholder(new Text("No deliveries to show"));
         loadDeliveries(currentView);
 
@@ -221,14 +231,14 @@ public class MainController {
             stage.setTitle("Settings");
             stage.setScene(scene);
             stage.showAndWait();
-            performSearch();
+            dao.close();
+            dao = new DBConnection();
+            if (deliveryTable != null) {
+                performSearch();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    public static boolean configExists() {
-        return new File("config.properties").exists();
-    }
-
 }
