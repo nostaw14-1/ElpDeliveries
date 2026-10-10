@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -211,7 +212,7 @@ public class MainController {
         }
     }
 
-    private void openSettings() {
+    public void openSettings() {
         try {
             System.out.println("settings");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
@@ -224,6 +225,10 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean configExists() {
+        return new File("config.properties").exists();
     }
 
 }
