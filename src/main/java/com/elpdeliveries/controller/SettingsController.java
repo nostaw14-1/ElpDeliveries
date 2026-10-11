@@ -29,6 +29,15 @@ public class SettingsController {
         private PasswordField passwordPf;
 
         @FXML
+        private TextField bucketTf;
+
+        @FXML
+        private TextField akTf;
+
+        @FXML
+        private TextField skTf;
+
+        @FXML
         public void initialize() {
                 try {
                         if (ConfigManager.exists()) {
@@ -37,6 +46,9 @@ public class SettingsController {
                                 dbTf.setText(ConfigManager.getDatabase());
                                 usernameTf.setText(ConfigManager.getUsername());
                                 passwordPf.setText(ConfigManager.getPassword());
+                                bucketTf.setText(ConfigManager.getBucket());
+                                akTf.setText(ConfigManager.getAwsAccessKey());
+                                skTf.setText(ConfigManager.getAwsSecretKey());
                         }
                 } catch (Exception e) {
                 }
@@ -77,7 +89,10 @@ public class SettingsController {
                                                 portTf.getText(),
                                                 dbTf.getText(),
                                                 usernameTf.getText(),
-                                                passwordPf.getText());
+                                                passwordPf.getText(),
+                                                akTf.getText(),
+                                                skTf.getText(),
+                                                bucketTf.getText());
                                 Stage stage = (Stage) ipTf.getScene().getWindow();
                                 stage.close();
                         } catch (Exception e) {

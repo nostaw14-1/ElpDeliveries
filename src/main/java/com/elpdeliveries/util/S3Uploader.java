@@ -16,7 +16,7 @@ public class S3Uploader {
     private static String ACCESS_KEY;
     private static String SECRET_KEY;
 
-    public S3Uploader() {
+    public static String upload(File file) {
         try {
             BUCKET = ConfigManager.getBucket();
             ACCESS_KEY = ConfigManager.getAwsAccessKey();
@@ -24,11 +24,9 @@ public class S3Uploader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static String upload (File file) {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
-        S3Client s3 = S3Client.builder().region(REGION).credentialsProvider(StaticCredentialsProvider.create(credentials)).build();
+        S3Client s3 = S3Client.builder().region(REGION)
+                .credentialsProvider(StaticCredentialsProvider.create(credentials)).build();
         String extension = file.getName().substring(file.getName().lastIndexOf("."));
         String fileName = UUID.randomUUID().toString() + extension;
         PutObjectRequest request = PutObjectRequest.builder().bucket(BUCKET).key(fileName).build();

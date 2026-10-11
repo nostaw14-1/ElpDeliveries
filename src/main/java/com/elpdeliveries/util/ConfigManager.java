@@ -19,7 +19,7 @@ public class ConfigManager {
     }
 
     public static void save(String server, String port, String database, String username, String password,
-            String awsAccessKey, String awsSecretKey, String bucket, String region) throws Exception {
+            String awsAccessKey, String awsSecretKey, String bucket) throws Exception {
         Properties props = new Properties();
         props.setProperty("server", server);
         props.setProperty("port", port);
@@ -29,7 +29,6 @@ public class ConfigManager {
         props.setProperty("awsAccessKey", awsAccessKey);
         props.setProperty("awsSecretKey", awsSecretKey);
         props.setProperty("bucket", bucket);
-        props.setProperty("region", region);
 
         props.store(new FileOutputStream(FILE_NAME), "ELP DELIVERIES SETTINGS");
     }
@@ -64,10 +63,6 @@ public class ConfigManager {
 
     public static String getBucket() throws Exception {
         return load().getProperty("bucket");
-    }
-
-    public static String getRegion() throws Exception {
-        return load().getProperty("region");
     }
     
 }
