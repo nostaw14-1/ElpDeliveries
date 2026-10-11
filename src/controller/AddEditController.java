@@ -100,15 +100,14 @@ public class AddEditController {
     @FXML
     private void handleSubmit() {
         try {
-            if (receiptTf.getText().trim().isEmpty()) {
-                showError("Receipt Number is required.");
-                return;
+            Date deliveryDate = null;
+            Integer receiptNum = null;
+            if (dfdDatePicker.getValue() != null) {
+                deliveryDate = Date.valueOf(dfdDatePicker.getValue());
             }
-            if (dfdDatePicker.getValue() == null) {
-                showError("Delivery Date is required");
-                return;
+            if (receiptTf.getText() != null) {
+                receiptNum = Integer.parseInt(receiptTf.getText());
             }
-            Date deliveryDate = Date.valueOf(dfdDatePicker.getValue());
             if (delivery == null) {
                 Delivery newDelivery = new Delivery(
                         null,
@@ -119,7 +118,7 @@ public class AddEditController {
                         addrTa.getText(),
                         storeNotesTa.getText(),
                         driverNotesTa.getText(),
-                        Integer.parseInt(receiptTf.getText()),
+                        receiptNum,
                         photoPath,
                         completedCb.isSelected(),
                         completedByTf.getText(),

@@ -5,23 +5,22 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AddEditController">
+<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AddEditController">
 
     <center>
 
         <VBox spacing="5.0">
-         <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+         <HBox spacing="10.0" style="-fx-border-color: #d4d4d4; -fx-border-width: 0 0 1 0;" VBox.vgrow="ALWAYS">
             <children>
       
                   <GridPane hgap="5" vgap="5" HBox.hgrow="ALWAYS">
@@ -70,7 +69,7 @@
                   </rowConstraints>
       
                   </GridPane>
-               <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+               <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0" HBox.hgrow="ALWAYS">
                   <children>
                      <Label text="Photo of Delivery" />
                      <BorderPane fx:id="photoPane" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" style="-fx-background-color: white; -fx-border-color: black;" VBox.vgrow="NEVER" />
@@ -89,6 +88,9 @@
             <VBox.margin>
                <Insets />
             </VBox.margin>
+            <padding>
+               <Insets bottom="7.0" />
+            </padding>
          </HBox>
          <Label text="Store Notes" />
 
@@ -110,16 +112,19 @@
 
     </center>
    <bottom>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <items>
+      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0" spacing="5.0" style="-fx-border-color: #d4d4d4; -fx-border-width: 1 0 0 0;" BorderPane.alignment="CENTER">
+         <children>
    
                   <Button onAction="#handleSubmit" text="Submit" />
             <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDelete" text="Delete" />
-            <Separator opacity="0.0" />
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
    
-                  <CheckBox fx:id="completedCb" text="Completed" />
-         </items>
-      </ToolBar>
+                  <CheckBox fx:id="completedCb" nodeOrientation="RIGHT_TO_LEFT" text="Completed" />
+         </children>
+         <padding>
+            <Insets left="7.0" right="7.0" />
+         </padding>
+      </HBox>
    </bottom>
 
 </BorderPane>
