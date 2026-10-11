@@ -2,3 +2,4 @@ bin/
 *.properties
 .vscode/
 ElpDeliveries.jar
+target/

@@ -1,3 +1,5 @@
+package com.elpdeliveries;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,7 +12,7 @@ public class ElpDeliveries extends Application {
     }
 
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/elpdeliveries/Main.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
         primaryStage.setTitle("ELP Deliveries");
