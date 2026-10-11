@@ -71,12 +71,8 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        if (!ConfigManager.exists()) {
-            openSettings();
-            dao = new DBConnection();
-        }
         dao = new DBConnection();
-        if (dao.getConnection() == null) {
+        if (dao.getConnection() == null || !ConfigManager.exists()) {
             openSettings();
             dao = new DBConnection();
             if (dao.getConnection() == null) {
@@ -237,7 +233,9 @@ public class MainController {
             stage.setTitle("Settings");
             stage.setScene(scene);
             stage.showAndWait();
-            dao.close();
+            if (dao != null) {
+                dao.close();
+            }
             dao = new DBConnection();
             if (deliveryTable != null) {
                 performSearch();

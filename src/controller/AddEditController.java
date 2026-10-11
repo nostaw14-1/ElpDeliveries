@@ -14,7 +14,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Delivery;
@@ -49,7 +49,7 @@ public class AddEditController {
     private CheckBox completedCb;
     @FXML
     private Button deleteButton;
-    @FXML private Pane photoPane;
+    @FXML private BorderPane photoPane;
     private String photoPath;
     private ImageView imageView;
     private Delivery delivery;
@@ -97,7 +97,7 @@ public class AddEditController {
                 imageView.setFitHeight(300);
                 imageView.setPreserveRatio(true);
                 photoPane.getChildren().clear();
-                photoPane.getChildren().add(imageView);
+                photoPane.setCenter(imageView);
             }
         }
     }
@@ -187,7 +187,7 @@ public class AddEditController {
             imageView.setFitWidth(300);
             imageView.setFitHeight(300);
             imageView.setPreserveRatio(true);
-            photoPane.getChildren().add(imageView);
+            photoPane.setCenter(imageView);
             imageView.setImage(image);
         }
     }
