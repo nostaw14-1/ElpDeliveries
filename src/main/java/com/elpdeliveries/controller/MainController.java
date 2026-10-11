@@ -24,8 +24,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import com.elpdeliveries.model.Delivery;
-import com.elpdeliveries.model.ConfigManager;
-import com.elpdeliveries.model.DBConnection;
+import com.elpdeliveries.util.ConfigManager;
+import com.elpdeliveries.util.DBConnection;
 
 public class MainController {
     @FXML

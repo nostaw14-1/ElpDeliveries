@@ -1,4 +1,4 @@
-package com.elpdeliveries.model;
+package com.elpdeliveries.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,13 +18,18 @@ public class ConfigManager {
         return props;
     }
 
-    public static void save(String server, String port, String database, String username, String password) throws Exception {
+    public static void save(String server, String port, String database, String username, String password,
+            String awsAccessKey, String awsSecretKey, String bucket, String region) throws Exception {
         Properties props = new Properties();
         props.setProperty("server", server);
         props.setProperty("port", port);
         props.setProperty("database", database);
         props.setProperty("username", username);
         props.setProperty("password", password);
+        props.setProperty("awsAccessKey", awsAccessKey);
+        props.setProperty("awsSecretKey", awsSecretKey);
+        props.setProperty("bucket", bucket);
+        props.setProperty("region", region);
 
         props.store(new FileOutputStream(FILE_NAME), "ELP DELIVERIES SETTINGS");
     }
@@ -44,7 +49,25 @@ public class ConfigManager {
     public static String getUsername() throws Exception {
         return load().getProperty("username");
     }
+
     public static String getPassword() throws Exception {
         return load().getProperty("password");
     }
+
+    public static String getAwsAccessKey() throws Exception {
+        return load().getProperty("awsAccessKey");
+    }
+
+    public static String getAwsSecretKey() throws Exception {
+        return load().getProperty("awsSecretKey");
+    }
+
+    public static String getBucket() throws Exception {
+        return load().getProperty("bucket");
+    }
+
+    public static String getRegion() throws Exception {
+        return load().getProperty("region");
+    }
+    
 }

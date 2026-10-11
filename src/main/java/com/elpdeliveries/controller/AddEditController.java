@@ -20,7 +20,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import com.elpdeliveries.model.Delivery;
-import com.elpdeliveries.model.DBConnection;
+import com.elpdeliveries.util.DBConnection;
+import com.elpdeliveries.util.S3Uploader;
 
 public class AddEditController {
     @FXML
@@ -92,8 +93,7 @@ public class AddEditController {
 
         if (delivery.getPhoto() != null && !delivery.getPhoto().isEmpty()) {
             photoPath = delivery.getPhoto();
-            File file = new File(photoPath);
-            showImage(file);
+            showImage(photoPath);
         }
     }
 
@@ -173,7 +173,18 @@ public class AddEditController {
                 "*.gif"));
 
         File file = chooser.showOpenDialog(photoPane.getScene().getWindow());
-        showImage(file);
+        if (file == null) {
+            return;
+        }
+        try {
+            photoPath = S3Uploader.upload(file);
+            showImage(photoPath);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Upload Failed");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     @FXML
@@ -195,10 +206,9 @@ public class AddEditController {
         }
     }
 
-    private void showImage(File file) {
-        if (file != null) {
-            photoPath = file.getAbsolutePath();
-            Image image = new Image(file.toURI().toString());
+    private void showImage(String imageUrl) {
+        Image image = new Image(imageUrl);
+        if (imageView == null) {
             imageView = new ImageView();
             imageView.setPreserveRatio(true);
             imageView.fitWidthProperty().bind(photoPane.widthProperty());

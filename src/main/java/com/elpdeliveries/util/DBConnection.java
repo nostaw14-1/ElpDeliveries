@@ -1,7 +1,8 @@
-package com.elpdeliveries.model;
+package com.elpdeliveries.util;
 import java.util.*;
 import java.sql.*;
 import java.sql.Date;
+import com.elpdeliveries.model.Delivery;
 
 public class DBConnection {
     protected String server;
