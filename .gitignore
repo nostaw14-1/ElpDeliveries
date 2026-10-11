@@ -1,5 +1,6 @@
-bin/
-*.properties
+config.properties
 .vscode/
 ElpDeliveries.jar
 target/
+.DS_STORE
+Thumbs.db
