@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -12,6 +13,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -49,7 +51,8 @@ public class AddEditController {
     private CheckBox completedCb;
     @FXML
     private Button deleteButton;
-    @FXML private BorderPane photoPane;
+    @FXML
+    private BorderPane photoPane;
     private String photoPath;
     private ImageView imageView;
     private Delivery delivery;
@@ -90,15 +93,7 @@ public class AddEditController {
         if (delivery.getPhoto() != null && !delivery.getPhoto().isEmpty()) {
             photoPath = delivery.getPhoto();
             File file = new File(photoPath);
-            if (file.exists()) {
-                Image image = new Image(file.toURI().toString());
-                imageView = new ImageView(image);
-                imageView.setFitWidth(300);
-                imageView.setFitHeight(300);
-                imageView.setPreserveRatio(true);
-                photoPane.getChildren().clear();
-                photoPane.setCenter(imageView);
-            }
+            showImage(file);
         }
     }
 
@@ -177,19 +172,9 @@ public class AddEditController {
                 "*.jpg",
                 "*.jpeg",
                 "*.gif"));
-        
-        File file = chooser.showOpenDialog(photoPane.getScene().getWindow());
 
-        if (file != null) {
-            photoPath = file.getAbsolutePath();
-            Image image = new Image(file.toURI().toString());
-            imageView = new ImageView();
-            imageView.setFitWidth(300);
-            imageView.setFitHeight(300);
-            imageView.setPreserveRatio(true);
-            photoPane.setCenter(imageView);
-            imageView.setImage(image);
-        }
+        File file = chooser.showOpenDialog(photoPane.getScene().getWindow());
+        showImage(file);
     }
 
     @FXML
@@ -209,6 +194,39 @@ public class AddEditController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void showImage(File file) {
+        if (file != null) {
+            photoPath = file.getAbsolutePath();
+            Image image = new Image(file.toURI().toString());
+            imageView = new ImageView();
+            imageView.setPreserveRatio(true);
+            imageView.fitWidthProperty().bind(photoPane.widthProperty());
+            imageView.fitHeightProperty().bind(photoPane.heightProperty());
+            photoPane.setCenter(imageView);
+            imageView.setImage(image);
+            imageView.setOnMouseClicked(e -> {
+                if (e.getClickCount() == 2) {
+                    showFullImage(image);
+                }
+            });
+            imageView.setStyle("-fx-cursor: hand");
+            Tooltip.install(imageView, new Tooltip("Double-click to enlarge"));
+        }
+    }
+
+    private void showFullImage(Image image) {
+        ImageView fullImageView = new ImageView(image);
+        fullImageView.setPreserveRatio(true);
+        BorderPane root = new BorderPane(fullImageView);
+        Scene scene = new Scene(root, 1000, 800);
+        fullImageView.fitHeightProperty().bind(scene.heightProperty());
+        fullImageView.fitWidthProperty().bind(scene.widthProperty());
+        Stage stage = new Stage();
+        stage.setTitle("Photo preview");
+        stage.setScene(scene);
+        stage.show();
     }
 
 }

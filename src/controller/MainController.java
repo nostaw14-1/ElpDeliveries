@@ -226,7 +226,6 @@ public class MainController {
 
     public void openSettings() {
         try {
-            System.out.println("settings");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
             Scene scene = new Scene(loader.load());
             Stage stage = new Stage();
