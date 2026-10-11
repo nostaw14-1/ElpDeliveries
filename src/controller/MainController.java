@@ -1,6 +1,5 @@
 package controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -80,6 +79,13 @@ public class MainController {
         if (dao.getConnection() == null) {
             openSettings();
             dao = new DBConnection();
+            if (dao.getConnection() == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("Database Connection Failed");
+                alert.setContentText("Please configure a valid database connection");
+                alert.showAndWait();
+                return;
+            }
         }
         deliveryTable.setPlaceholder(new Text("No deliveries to show"));
         loadDeliveries(currentView);

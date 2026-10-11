@@ -42,39 +42,49 @@ public class SettingsController {
         }
 
         @FXML
-        private void handleTest() {
+        private boolean handleTest() {
 
-                String url = "jdbc:mysql://" + ipTf.getText() + ":" + portTf.getText() + "/" + dbTf.getText();
-                try (
-                                Connection conn = DriverManager.getConnection(url, usernameTf.getText(),
-                                                passwordPf.getText())) {
+                String server = ipTf.getText().trim();
+                String port = portTf.getText().trim();
+                String database = dbTf.getText().trim();
+                String username = usernameTf.getText().trim();
+                String password = passwordPf.getText().trim();
+
+                String url = "jdbc:mysql://" + server + ":" + port + "/" + database;
+                try (Connection conn = DriverManager.getConnection(url, username, password)) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setHeaderText("Connection Successful");
                         alert.setContentText("Connected successfully.");
                         alert.showAndWait();
+                        return true;
                 } catch (Exception e) {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setHeaderText("Connection Failed");
                         alert.setContentText(e.getMessage());
                         alert.showAndWait();
+                        return false;
                 }
         }
 
         @FXML
         private void handleSubmit() {
-                try {
-                        ConfigManager.save(ipTf.getText(),
-                                        portTf.getText(),
-                                        dbTf.getText(),
-                                        usernameTf.getText(),
-                                        passwordPf.getText());
-                        Stage stage = (Stage) ipTf.getScene().getWindow();
-                        stage.close();
-                } catch (Exception e) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setHeaderText("Save Failed");
-                        alert.setContentText(e.getMessage());
-                        alert.showAndWait();
+
+                if (handleTest()) {
+
+                        try {
+                                ConfigManager.save(ipTf.getText(),
+                                                portTf.getText(),
+                                                dbTf.getText(),
+                                                usernameTf.getText(),
+                                                passwordPf.getText());
+                                Stage stage = (Stage) ipTf.getScene().getWindow();
+                                stage.close();
+                        } catch (Exception e) {
+                                Alert alert = new Alert(Alert.AlertType.ERROR);
+                                alert.setHeaderText("Save Failed");
+                                alert.setContentText(e.getMessage());
+                                alert.showAndWait();
+                        }
                 }
         }
 }
