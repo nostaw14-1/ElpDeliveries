@@ -71,11 +71,11 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        dao = new DBConnection();
         if (!ConfigManager.exists()) {
             openSettings();
             dao = new DBConnection();
         }
+        dao = new DBConnection();
         if (dao.getConnection() == null) {
             openSettings();
             dao = new DBConnection();
