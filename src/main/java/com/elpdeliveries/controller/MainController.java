@@ -18,6 +18,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -66,8 +67,19 @@ public class MainController {
     private Label countLabel;
     @FXML
     private TabPane tabPane;
+    @FXML
+    private TextField receiptTf;
+    @FXML
+    private TextField createdAtTf;
+    @FXML
+    private TextField completedByTf;
+    @FXML
+    private TextArea dlvNotesTa;
+    @FXML
+    private TextArea storeNotesTa;
     private String currentView = "All Deliveries";
     private DBConnection dao;
+    private Delivery selectedDelivery;
 
     @FXML
     public void initialize() {
@@ -133,6 +145,10 @@ public class MainController {
 
         completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
 
+        deliveryTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            showPreview(newSelection);
+        });
+
     }
 
     @FXML
@@ -148,6 +164,14 @@ public class MainController {
     @FXML
     private void handleSettings() {
         openSettings();
+    }
+
+    @FXML
+    private void handleEdit() {
+        if (selectedDelivery == null) {
+            return;
+        }
+        openAddEdit(selectedDelivery);
     }
 
     private void performSearch() {
@@ -243,5 +267,23 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void showPreview(Delivery d) {
+        selectedDelivery = d;
+        if (d == null) {
+            receiptTf.clear();
+            createdAtTf.clear();
+            completedByTf.clear();
+            dlvNotesTa.clear();
+            storeNotesTa.clear();
+            return;
+        }
+        receiptTf.setText(String.valueOf(d.getReceiptNum()));
+        createdAtTf.setText(d.getCreatedDate() == null ? "" : d.getCreatedDate() + "");
+        completedByTf.setText(d.getCompletedBy() == null ? "" : d.getCompletedBy());
+        dlvNotesTa.setText(d.getDlvNotes() == null ? "" : d.getDlvNotes());
+        storeNotesTa.setText(d.getStoreNotes() == null ? "" : d.getStoreNotes());
+
     }
 }
