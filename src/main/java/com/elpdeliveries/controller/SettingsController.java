@@ -64,7 +64,7 @@ public class SettingsController {
                 String password = passwordPf.getText().trim();
 
                 String url = "jdbc:mysql://" + server + ":" + port + "/" + database;
-                try (Connection conn = DriverManager.getConnection(url, username, password)) {
+                try (Connection _ = DriverManager.getConnection(url, username, password)) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setHeaderText("Connection Successful");
                         alert.setContentText("Connected successfully.");
