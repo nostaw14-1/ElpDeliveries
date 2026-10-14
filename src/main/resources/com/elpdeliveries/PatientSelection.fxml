@@ -6,9 +6,9 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="patientSelectionController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.elpdeliveries.controller.PatientSelectionController">
    <children>
-      <TableView prefHeight="400.0" prefWidth="500.0">
+      <TableView fx:id="patientTable" prefHeight="400.0" prefWidth="500.0">
          <columns>
             <TableColumn fx:id="firstNameCol" prefWidth="100.0" text="First Name" />
             <TableColumn fx:id="surnameCol" prefWidth="100.0" text="Surname" />

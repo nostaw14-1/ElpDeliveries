@@ -1,13 +1,15 @@
 package com.elpdeliveries.controller;
 
+import java.util.List;
+
 import com.elpdeliveries.model.Patient;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
-
-import java.util.List;
 
 public class PatientSelectionController {
 
@@ -52,18 +54,41 @@ public class PatientSelectionController {
     @FXML
     private void handleSelect() {
 
-        selectedPatient =
-                patientTable.getSelectionModel()
-                            .getSelectedItem();
+        selectedPatient = patientTable.getSelectionModel()
+                .getSelectedItem();
 
         if (selectedPatient != null) {
             ((Stage) patientTable.getScene()
-                                 .getWindow())
+                    .getWindow())
                     .close();
         }
     }
 
     public Patient getSelectedPatient() {
         return selectedPatient;
+    }
+
+    @FXML
+    private void handleUseSelected() {
+        selectedPatient = patientTable.getSelectionModel()
+                .getSelectedItem();
+
+        if (selectedPatient == null) {
+
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+
+            alert.setHeaderText("No Patient Selected");
+            alert.setContentText("Please select a patient.");
+
+            alert.showAndWait();
+
+            return;
+        }
+
+        Stage stage = (Stage) patientTable
+                .getScene()
+                .getWindow();
+
+        stage.close();
     }
 }

@@ -3,6 +3,13 @@ package com.elpdeliveries.controller;
 import java.io.File;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.List;
+
+import com.elpdeliveries.model.Delivery;
+import com.elpdeliveries.model.Patient;
+import com.elpdeliveries.util.DBConnection;
+import com.elpdeliveries.util.PatientDBConnection;
+import com.elpdeliveries.util.S3Uploader;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,12 +27,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import com.elpdeliveries.model.Delivery;
-import com.elpdeliveries.model.Patient;
-import com.elpdeliveries.util.DBConnection;
-import com.elpdeliveries.util.PatientDBConnection;
-import com.elpdeliveries.util.S3Uploader;
-import java.util.List;
 
 public class AddEditController {
     @FXML
@@ -270,6 +271,7 @@ public class AddEditController {
                 addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             showError(e.getMessage());
         }
     }
@@ -289,6 +291,7 @@ public class AddEditController {
             stage.showAndWait();
             return controller.getSelectedPatient();
         } catch (Exception e) {
+            e.printStackTrace();
             showError(e.getMessage());
             return null;
         }
