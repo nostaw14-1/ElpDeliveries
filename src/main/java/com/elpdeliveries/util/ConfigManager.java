@@ -18,19 +18,43 @@ public class ConfigManager {
         return props;
     }
 
-    public static void save(String server, String port, String database, String username, String password,
-            String awsAccessKey, String awsSecretKey, String bucket) throws Exception {
+    public static void save(
+            String server,
+            String port,
+            String database,
+            String username,
+            String password,
+            String sqlServer,
+            String sqlDatabase,
+            String sqlUsername,
+            String sqlPassword,
+            String awsAccessKey,
+            String awsSecretKey,
+            String bucket) throws Exception {
+
         Properties props = new Properties();
+
         props.setProperty("server", server);
         props.setProperty("port", port);
         props.setProperty("database", database);
         props.setProperty("username", username);
         props.setProperty("password", password);
+
+        props.setProperty("sqlServer", sqlServer);
+        props.setProperty("sqlDatabase", sqlDatabase);
+        props.setProperty("sqlUsername", sqlUsername);
+        props.setProperty("sqlPassword", sqlPassword);
+
         props.setProperty("awsAccessKey", awsAccessKey);
         props.setProperty("awsSecretKey", awsSecretKey);
         props.setProperty("bucket", bucket);
 
-        props.store(new FileOutputStream(FILE_NAME), "ELP DELIVERIES SETTINGS");
+        try (FileOutputStream fos = new FileOutputStream(FILE_NAME)) {
+
+            props.store(
+                    fos,
+                    "ELP DELIVERIES SETTINGS");
+        }
     }
 
     public static String getServer() throws Exception {
@@ -64,5 +88,37 @@ public class ConfigManager {
     public static String getBucket() throws Exception {
         return load().getProperty("bucket");
     }
-    
+
+    public static String getSqlServer()
+            throws Exception {
+
+        return load().getProperty(
+                "sqlServer",
+                "");
+    }
+
+    public static String getSqlDatabase()
+            throws Exception {
+
+        return load().getProperty(
+                "sqlDatabase",
+                "");
+    }
+
+    public static String getSqlUsername()
+            throws Exception {
+
+        return load().getProperty(
+                "sqlUsername",
+                "");
+    }
+
+    public static String getSqlPassword()
+            throws Exception {
+
+        return load().getProperty(
+                "sqlPassword",
+                "");
+    }
+
 }

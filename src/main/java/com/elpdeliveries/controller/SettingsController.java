@@ -90,6 +90,10 @@ public class SettingsController {
                                                 dbTf.getText(),
                                                 usernameTf.getText(),
                                                 passwordPf.getText(),
+                                                "",
+                                                "",
+                                                "",
+                                                "",
                                                 akTf.getText(),
                                                 skTf.getText(),
                                                 bucketTf.getText());
