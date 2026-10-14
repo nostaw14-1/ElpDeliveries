@@ -37,6 +37,11 @@ public class SettingsController {
         @FXML
         private TextField skTf;
 
+        @FXML private TextField sqlServerTf;
+        @FXML private TextField sqlDbTf;
+        @FXML private TextField sqlUserTf;
+        @FXML private PasswordField sqlPwdPf;
+
         @FXML
         public void initialize() {
                 try {
@@ -46,6 +51,10 @@ public class SettingsController {
                                 dbTf.setText(ConfigManager.getDatabase());
                                 usernameTf.setText(ConfigManager.getUsername());
                                 passwordPf.setText(ConfigManager.getPassword());
+                                sqlServerTf.setText(ConfigManager.getSqlServer());
+                                sqlDbTf.setText(ConfigManager.getSqlDatabase());
+                                sqlUserTf.setText(ConfigManager.getSqlUsername());
+                                sqlPwdPf.setText(ConfigManager.getSqlPassword());
                                 bucketTf.setText(ConfigManager.getBucket());
                                 akTf.setText(ConfigManager.getAwsAccessKey());
                                 skTf.setText(ConfigManager.getAwsSecretKey());
@@ -90,10 +99,10 @@ public class SettingsController {
                                                 dbTf.getText(),
                                                 usernameTf.getText(),
                                                 passwordPf.getText(),
-                                                "",
-                                                "",
-                                                "",
-                                                "",
+                                                sqlServerTf.getText(),
+                                                sqlDbTf.getText(),
+                                                sqlUserTf.getText(),
+                                                sqlPwdPf.getText(),
                                                 akTf.getText(),
                                                 skTf.getText(),
                                                 bucketTf.getText());

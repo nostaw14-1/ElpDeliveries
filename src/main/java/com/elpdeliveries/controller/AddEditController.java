@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -20,8 +21,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import com.elpdeliveries.model.Delivery;
+import com.elpdeliveries.model.Patient;
 import com.elpdeliveries.util.DBConnection;
+import com.elpdeliveries.util.PatientDBConnection;
 import com.elpdeliveries.util.S3Uploader;
+import java.util.List;
 
 public class AddEditController {
     @FXML
@@ -236,6 +240,58 @@ public class AddEditController {
         stage.setTitle("Photo preview");
         stage.setScene(scene);
         stage.show();
+    }
+
+    @FXML
+    private void handleFillFromZ() {
+        PatientDBConnection patientDao = new PatientDBConnection();
+        try {
+            if (fnameTf.getText().trim() == null && lnameTf.getText().trim() == null) {
+                return;
+            }
+
+            List<Patient> foundPatients = patientDao.findPatients(fnameTf.getText(), lnameTf.getText());
+            if (foundPatients.size() == 0) {
+                showError("No Matches Found");
+                return;
+            }
+            if (foundPatients.size() == 1) {
+                Patient patient = foundPatients.getFirst();
+                fnameTf.setText(patient.getFirstName());
+                lnameTf.setText(patient.getSurname());
+                phoneTf.setText(patient.getMobileNumber());
+                addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
+            }
+            if (foundPatients.size() > 1) {
+                Patient patient = showPatientSelection(foundPatients);
+                fnameTf.setText(patient.getFirstName());
+                lnameTf.setText(patient.getSurname());
+                phoneTf.setText(patient.getMobileNumber());
+                addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
+            }
+        } catch (SQLException e) {
+            showError(e.getMessage());
+        }
+    }
+
+    private Patient showPatientSelection(
+            List<Patient> patients) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/com/elpdeliveries/PatientSelection.fxml"));
+            Scene scene = new Scene(loader.load());
+            PatientSelectionController controller = loader.getController();
+            controller.setPatients(patients);
+            Stage stage = new Stage();
+            stage.setTitle("Select Patient");
+            stage.setScene(scene);
+            stage.showAndWait();
+            return controller.getSelectedPatient();
+        } catch (Exception e) {
+            showError(e.getMessage());
+            return null;
+        }
     }
 
 }

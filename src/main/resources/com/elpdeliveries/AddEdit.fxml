@@ -15,15 +15,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-   fx:controller="com.elpdeliveries.controller.AddEditController">
+<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.elpdeliveries.controller.AddEditController">
 
    <center>
 
       <VBox spacing="5.0">
-         <HBox spacing="10.0" style="-fx-border-color: #d4d4d4; -fx-border-width: 0 0 1 0;"
-            VBox.vgrow="ALWAYS">
+         <HBox spacing="10.0" style="-fx-border-color: #d4d4d4; -fx-border-width: 0 0 1 0;" VBox.vgrow="ALWAYS">
             <children>
 
                <GridPane hgap="5" vgap="5" HBox.hgrow="ALWAYS">
@@ -48,13 +45,10 @@
                   <Label text="Date for Delivery" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <TextField fx:id="createdAtTf" editable="false" GridPane.rowIndex="7" />
                   <TextField fx:id="completedByTf" GridPane.rowIndex="9" />
-                  <TextArea fx:id="addrTa" prefRowCount="3" GridPane.columnSpan="2"
-                     GridPane.rowIndex="11" />
+                  <TextArea fx:id="addrTa" prefRowCount="3" GridPane.columnSpan="2" GridPane.rowIndex="11" />
                   <Label text="Completed At" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                  <TextField fx:id="completedAtTf" editable="false" GridPane.columnIndex="1"
-                     GridPane.rowIndex="9" />
-                  <DatePicker fx:id="dfdDatePicker" maxWidth="1.7976931348623157E308"
-                     GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                  <TextField fx:id="completedAtTf" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                  <DatePicker fx:id="dfdDatePicker" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                   <columnConstraints>
                      <ColumnConstraints percentWidth="50.0" />
                      <ColumnConstraints percentWidth="50.0" />
@@ -78,16 +72,11 @@
                <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0" HBox.hgrow="ALWAYS">
                   <children>
                      <Label text="Photo of Delivery" />
-                     <BorderPane fx:id="photoPane" maxHeight="-Infinity" minHeight="-Infinity"
-                        minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0"
-                        style="-fx-background-color: white; -fx-border-color: black;"
-                        VBox.vgrow="NEVER" />
+                     <BorderPane fx:id="photoPane" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" style="-fx-background-color: white; -fx-border-color: black;" VBox.vgrow="NEVER" />
                      <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" spacing="50.0">
                         <children>
-                           <Button fx:id="uploadBtn" mnemonicParsing="false"
-                              onAction="#handleUpload" text="Upload" />
-                           <CheckBox fx:id="handedCb" mnemonicParsing="false"
-                              nodeOrientation="RIGHT_TO_LEFT" text="Handed to Customer" />
+                           <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#handleUpload" text="Upload" />
+                           <CheckBox fx:id="handedCb" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="Handed to Customer" />
                         </children>
                         <VBox.margin>
                            <Insets top="5.0" />
@@ -124,13 +113,12 @@
 
    </center>
    <bottom>
-      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0" spacing="5.0"
-         style="-fx-border-color: #d4d4d4; -fx-border-width: 1 0 0 0;" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0" spacing="5.0" style="-fx-border-color: #d4d4d4; -fx-border-width: 1 0 0 0;" BorderPane.alignment="CENTER">
          <children>
 
             <Button onAction="#handleSubmit" text="Submit" />
-            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDelete"
-               text="Delete" />
+            <Button mnemonicParsing="false" onAction="#handleFillFromZ" text="Fill from Z" />
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDelete" text="Delete" />
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
 
             <CheckBox fx:id="completedCb" nodeOrientation="RIGHT_TO_LEFT" text="Completed" />

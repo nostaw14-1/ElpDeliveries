@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -26,10 +25,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import com.elpdeliveries.model.Delivery;
-import com.elpdeliveries.model.Patient;
 import com.elpdeliveries.util.ConfigManager;
 import com.elpdeliveries.util.DBConnection;
-import com.elpdeliveries.util.PatientDBConnection;
 
 public class MainController {
     @FXML
@@ -157,21 +154,6 @@ public class MainController {
     @FXML
     private void handleSearch() {
         performSearch();
-
-        List<Patient> patients;
-        try {
-            PatientDBConnection patientDao = new PatientDBConnection();
-            patients = patientDao.findPatients(fnameField.getText(), lnameField.getText());
-            for (Patient patient : patients) {
-                System.out.println(patient.getFirstName());
-                System.out.println(patient.getSurname());
-                System.out.println(patient.getMobileNumber());
-                System.out.println(patient.getHomeAddress());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 
     @FXML
