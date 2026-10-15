@@ -26,11 +26,11 @@
                <GridPane hgap="5" vgap="5" HBox.hgrow="ALWAYS">
 
                   <Label text="First Name" />
-                  <TextField fx:id="fnameTf" GridPane.rowIndex="1" />
+                  <TextField fx:id="fnameTf" onAction="#handleFillFromName" GridPane.rowIndex="1" />
 
                   <Label text="Last Name" GridPane.columnIndex="1" />
 
-                  <TextField fx:id="lnameTf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="lnameTf" onAction="#handleFillFromName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                   <Label text="Phone Number" GridPane.rowIndex="2" />
 
@@ -38,7 +38,7 @@
 
                   <Label text="Receipt Number" GridPane.rowIndex="4" />
 
-                  <TextField fx:id="receiptTf" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+                  <TextField fx:id="receiptTf" onAction="#handleFillFromId" GridPane.columnSpan="2" GridPane.rowIndex="5" />
                   <Label text="Created At" GridPane.rowIndex="6" />
                   <Label text="Completed By" GridPane.rowIndex="8" />
                   <Label text="Address" GridPane.rowIndex="10" />
@@ -117,7 +117,8 @@
          <children>
 
             <Button onAction="#handleSubmit" text="Submit" />
-            <Button mnemonicParsing="false" onAction="#handleFillFromZ" text="Fill from Z" />
+            <Button mnemonicParsing="false" onAction="#handleFillFromId" text="Fill from Receipt Number" />
+            <Button mnemonicParsing="false" onAction="#handleFillFromName" text="Fill From Name" />
             <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDelete" text="Delete" />
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
 

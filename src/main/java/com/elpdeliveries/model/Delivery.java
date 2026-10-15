@@ -11,7 +11,7 @@ public class Delivery {
     private String addr;
     private String storeNotes;
     private String dlvNotes;
-    private int receiptNum;
+    private int receiptId;
     private String photo;
     private boolean completed;
     private String completedBy;
@@ -20,11 +20,11 @@ public class Delivery {
     private String addEdit;
 
     public Delivery(int id, Date createdDate, Date dlvDate,
-            String fname, String lname, String phnum,
-            String addr, String storeNotes, String dlvNotes,
-            int receiptNum, String photo,
-            boolean completed, String completedBy,
-            Date completedDate, boolean handedToCustomer) {
+                    String fname, String lname, String phnum,
+                    String addr, String storeNotes, String dlvNotes,
+                    int receiptId, String photo,
+                    boolean completed, String completedBy,
+                    Date completedDate, boolean handedToCustomer) {
         this.id = id;
         this.createdDate = createdDate;
         this.dlvDate = dlvDate;
@@ -34,7 +34,7 @@ public class Delivery {
         this.addr = addr;
         this.storeNotes = storeNotes;
         this.dlvNotes = dlvNotes;
-        this.receiptNum = receiptNum;
+        this.receiptId = receiptId;
         this.photo = photo;
         this.completed = completed;
         this.completedBy = completedBy;
@@ -44,11 +44,11 @@ public class Delivery {
     }
 
     public Delivery(Date createdDate, Date dlvDate,
-            String fname, String lname, String phnum,
-            String addr, String storeNotes, String dlvNotes,
-            int receiptNum, String photo,
-            boolean completed, String completedBy,
-            Date completedDate, boolean handedToCustomer) {
+                    String fname, String lname, String phnum,
+                    String addr, String storeNotes, String dlvNotes,
+                    int receiptId, String photo,
+                    boolean completed, String completedBy,
+                    Date completedDate, boolean handedToCustomer) {
         this.createdDate = createdDate;
         this.dlvDate = dlvDate;
         this.fname = fname;
@@ -57,7 +57,7 @@ public class Delivery {
         this.addr = addr;
         this.storeNotes = storeNotes;
         this.dlvNotes = dlvNotes;
-        this.receiptNum = receiptNum;
+        this.receiptId = receiptId;
         this.photo = photo;
         this.completed = completed;
         this.completedBy = completedBy;
@@ -134,12 +134,12 @@ public class Delivery {
         this.dlvNotes = dlvNotes;
     }
 
-    public int getReceiptNum() {
-        return receiptNum;
+    public int getReceiptId() {
+        return receiptId;
     }
 
-    public void setReceiptNum(int receiptNum) {
-        this.receiptNum = receiptNum;
+    public void setReceiptId(int receiptId) {
+        this.receiptId = receiptId;
     }
 
     public String getPhoto() {

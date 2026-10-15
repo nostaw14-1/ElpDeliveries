@@ -279,7 +279,7 @@ public class MainController {
             storeNotesTa.clear();
             return;
         }
-        receiptTf.setText(String.valueOf(d.getReceiptNum()));
+        receiptTf.setText(String.valueOf(d.getReceiptId()));
         createdAtTf.setText(d.getCreatedDate() == null ? "" : d.getCreatedDate() + "");
         completedByTf.setText(d.getCompletedBy() == null ? "" : d.getCompletedBy());
         dlvNotesTa.setText(d.getDlvNotes() == null ? "" : d.getDlvNotes());

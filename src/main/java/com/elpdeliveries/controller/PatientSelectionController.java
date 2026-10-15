@@ -7,6 +7,7 @@ import com.elpdeliveries.model.Patient;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -23,10 +24,15 @@ public class PatientSelectionController {
     private TableColumn<Patient, String> surnameCol;
 
     @FXML
-    private TableColumn<Patient, String> phoneCol;
+    private TableColumn<Patient, String> mobilePhoneCol;
+
+    @FXML
+    private TableColumn<Patient, String> homePhoneCol;
 
     @FXML
     private TableColumn<Patient, String> addressCol;
+
+    @FXML private CheckBox useMobileCb;
 
     private Patient selectedPatient;
 
@@ -39,8 +45,11 @@ public class PatientSelectionController {
         surnameCol.setCellValueFactory(
                 new javafx.scene.control.cell.PropertyValueFactory<>("surname"));
 
-        phoneCol.setCellValueFactory(
+        mobilePhoneCol.setCellValueFactory(
                 new javafx.scene.control.cell.PropertyValueFactory<>("mobileNumber"));
+
+        homePhoneCol.setCellValueFactory(
+                new javafx.scene.control.cell.PropertyValueFactory<>("phoneNumber"));
 
         addressCol.setCellValueFactory(
                 new javafx.scene.control.cell.PropertyValueFactory<>("homeAddress"));
@@ -49,19 +58,6 @@ public class PatientSelectionController {
     public void setPatients(List<Patient> patients) {
         patientTable.setItems(
                 FXCollections.observableArrayList(patients));
-    }
-
-    @FXML
-    private void handleSelect() {
-
-        selectedPatient = patientTable.getSelectionModel()
-                .getSelectedItem();
-
-        if (selectedPatient != null) {
-            ((Stage) patientTable.getScene()
-                    .getWindow())
-                    .close();
-        }
     }
 
     public Patient getSelectedPatient() {

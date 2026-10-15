@@ -31,7 +31,7 @@ public class DBConnection {
         return conn;
     }
 
-    public ArrayList<Delivery> getDeliveries(String view, Date date, String fname, String lname, Integer receiptNum, Boolean uncompleted) throws SQLException {
+    public ArrayList<Delivery> getDeliveries(String view, Date date, String fname, String lname, Integer receiptId, Boolean uncompleted) throws SQLException {
         String sql = "SELECT * FROM deliveries";
         ArrayList<Object> params = new ArrayList<>();
         if (view == null) {
@@ -65,9 +65,9 @@ public class DBConnection {
             params.add("%" + lname + "%");
         }
 
-        if (receiptNum != null) {
+        if (receiptId != null) {
             sql += sql.contains("WHERE") ? " AND receiptNum = ?" : " WHERE receiptNum = ?";
-            params.add(receiptNum);
+            params.add(receiptId);
         }
 
         if (Boolean.TRUE.equals(uncompleted)) {
@@ -145,7 +145,7 @@ public class DBConnection {
         ps.setString(1, d.getFname());
         ps.setString(2, d.getLname());
         ps.setString(3, d.getPhnum());
-        ps.setInt(4, d.getReceiptNum());
+        ps.setInt(4, d.getReceiptId());
         ps.setString(5, d.getAddr());
         ps.setDate(6, d.getDlvDate());
         ps.setString(7, d.getStoreNotes());
@@ -166,7 +166,7 @@ public class DBConnection {
         ps.setString(1, d.getFname());
         ps.setString(2, d.getLname());
         ps.setString(3, d.getPhnum());
-        ps.setInt(4, d.getReceiptNum());
+        ps.setInt(4, d.getReceiptId());
         ps.setString(5, d.getAddr());
         ps.setDate(6, d.getDlvDate());
         ps.setString(7, d.getStoreNotes());

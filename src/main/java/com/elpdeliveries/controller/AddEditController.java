@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.elpdeliveries.model.Delivery;
 import com.elpdeliveries.model.Patient;
+import com.elpdeliveries.model.ReceiptItem;
+import com.elpdeliveries.model.ReceiptLookupResult;
 import com.elpdeliveries.util.DBConnection;
 import com.elpdeliveries.util.PatientDBConnection;
 import com.elpdeliveries.util.S3Uploader;
@@ -79,7 +81,7 @@ public class AddEditController {
         fnameTf.setText(delivery.getFname());
         lnameTf.setText(delivery.getLname());
         phoneTf.setText(delivery.getPhnum());
-        receiptTf.setText(delivery.getReceiptNum() + "");
+        receiptTf.setText(delivery.getReceiptId() + "");
         addrTa.setText(delivery.getAddr());
         storeNotesTa.setText(delivery.getStoreNotes());
         driverNotesTa.setText(delivery.getDlvNotes());
@@ -106,12 +108,12 @@ public class AddEditController {
     private void handleSubmit() {
         try {
             Date deliveryDate = null;
-            Integer receiptNum = null;
+            Integer receiptId = null;
             if (dfdDatePicker.getValue() != null) {
                 deliveryDate = Date.valueOf(dfdDatePicker.getValue());
             }
             if (receiptTf.getText() != null) {
-                receiptNum = Integer.parseInt(receiptTf.getText());
+                receiptId = Integer.parseInt(receiptTf.getText());
             }
             if (delivery == null) {
                 Delivery newDelivery = new Delivery(
@@ -123,7 +125,7 @@ public class AddEditController {
                         addrTa.getText(),
                         storeNotesTa.getText(),
                         driverNotesTa.getText(),
-                        receiptNum,
+                        receiptId,
                         photoPath,
                         completedCb.isSelected(),
                         completedByTf.getText(),
@@ -137,7 +139,7 @@ public class AddEditController {
                 delivery.setAddr(addrTa.getText());
                 delivery.setStoreNotes(storeNotesTa.getText());
                 delivery.setDlvNotes(driverNotesTa.getText());
-                delivery.setReceiptNum(Integer.parseInt(receiptTf.getText().trim()));
+                delivery.setReceiptId(Integer.parseInt(receiptTf.getText().trim()));
                 delivery.setCompleted(completedCb.isSelected());
                 delivery.setCompletedBy(completedByTf.getText());
                 delivery.setHandedToCustomer(handedCb.isSelected());
@@ -244,15 +246,49 @@ public class AddEditController {
     }
 
     @FXML
-    private void handleFillFromZ() {
+    private void handleFillFromId() {
+        PatientDBConnection patientDao = new PatientDBConnection();
+        try {
+            if (receiptTf.getText().isBlank()) {
+                return;
+            }
+
+            ReceiptLookupResult foundPatients = patientDao.findPatientsById(Integer.parseInt(receiptTf.getText().trim()));
+            if (foundPatients.getItems().isEmpty()) {
+                showError("No Matches Found");
+                return;
+            }
+                Patient patient = foundPatients.getPatient();
+                fnameTf.setText(patient.getFirstName());
+                lnameTf.setText(patient.getSurname());
+                phoneTf.setText(patient.getMobileNumber());
+                addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
+                StringBuilder items = new StringBuilder();
+                for (ReceiptItem item : foundPatients.getItems()) {
+                    items.append(item.getQuantity());
+                    items.append("x ");
+                    items.append(item.getDescription());
+                    items.append(" at ");
+                    items.append(item.getPrice());
+                    items.append("\n");
+                }
+                driverNotesTa.setText(items.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showError(e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleFillFromName() {
         PatientDBConnection patientDao = new PatientDBConnection();
         try {
             if (fnameTf.getText().trim() == null && lnameTf.getText().trim() == null) {
                 return;
             }
 
-            List<Patient> foundPatients = patientDao.findPatients(fnameTf.getText(), lnameTf.getText());
-            if (foundPatients.size() == 0) {
+            List<Patient> foundPatients = patientDao.findPatientsByName(fnameTf.getText(), lnameTf.getText());
+            if (foundPatients.isEmpty()) {
                 showError("No Matches Found");
                 return;
             }

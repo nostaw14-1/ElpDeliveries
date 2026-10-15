@@ -3,7 +3,10 @@ package com.elpdeliveries.util;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.elpdeliveries.model.Patient;
+import com.elpdeliveries.model.ReceiptItem;
+import com.elpdeliveries.model.ReceiptLookupResult;
 
 public class PatientDBConnection {
 
@@ -28,7 +31,80 @@ public class PatientDBConnection {
         }
     }
 
-    public List<Patient> findPatients(
+    public ReceiptLookupResult findPatientsById(
+            int receiptId)
+            throws SQLException {
+
+        ReceiptLookupResult result = new ReceiptLookupResult();
+
+
+        String sql = """
+                SELECT
+                    c.FirstName,
+                    c.Surname,
+                    c.HomeAddress,
+                    c.HomeSuburb,
+                    c.PhoneNumber,
+                    c.MobileNumber,
+                    ri.Description,
+                    ri.Qty,
+                    ri.SellPrice
+                FROM Receipts r
+                INNER JOIN Clients c
+                    ON r.clientID = c.ID
+                INNER JOIN ReceiptItems ri
+                    ON r.ID = ri.receiptID
+                WHERE r.ID = ?
+                """;
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        ps.setInt(1, receiptId);
+
+        ResultSet rs = ps.executeQuery();
+
+        Patient patient = null;
+
+        while (rs.next()) {
+
+            if (patient == null) {
+                patient = new Patient();
+
+                patient.setFirstName(
+                        rs.getString("FirstName"));
+
+                patient.setSurname(
+                        rs.getString("Surname"));
+
+                patient.setHomeAddress(
+                        rs.getString("HomeAddress"));
+
+                patient.setHomeSuburb(
+                        rs.getString("HomeSuburb"));
+
+                patient.setPhoneNumber(
+                        rs.getString("PhoneNumber"));
+
+                patient.setMobileNumber(
+                        rs.getString("MobileNumber"));
+            }
+
+            ReceiptItem item = new ReceiptItem();
+
+            item.setDescription(rs.getString("Description"));
+            item.setQuantity(rs.getInt("Qty"));
+            item.setPrice(rs.getInt("SellPrice"));
+
+            result.getItems().add(item);
+
+            result.setPatient(patient);
+
+        }
+
+        return result;
+    }
+
+    public List<Patient> findPatientsByName(
             String firstName,
             String surname)
             throws SQLException {
@@ -83,4 +159,5 @@ public class PatientDBConnection {
 
         return patients;
     }
+
 }
