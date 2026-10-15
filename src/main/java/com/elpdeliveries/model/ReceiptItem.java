@@ -1,5 +1,8 @@
 package com.elpdeliveries.model;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class ReceiptItem {
     private String description;
     private int quantity;
@@ -27,5 +30,9 @@ public class ReceiptItem {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getPriceString() {
+        return NumberFormat.getCurrencyInstance(Locale.of("en", "AU")).format(price);
     }
 }

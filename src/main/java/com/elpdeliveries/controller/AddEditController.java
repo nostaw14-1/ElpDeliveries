@@ -13,20 +13,15 @@ import com.elpdeliveries.util.DBConnection;
 import com.elpdeliveries.util.PatientDBConnection;
 import com.elpdeliveries.util.S3Uploader;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -48,8 +43,6 @@ public class AddEditController {
     @FXML
     private TextArea addrTa;
     @FXML
-    private TextArea storeNotesTa;
-    @FXML
     private TextArea driverNotesTa;
     @FXML
     private DatePicker dfdDatePicker;
@@ -61,6 +54,14 @@ public class AddEditController {
     private Button deleteButton;
     @FXML
     private BorderPane photoPane;
+    @FXML
+    private TableView<ReceiptItem> itemsTable;
+    @FXML
+    private TableColumn<ReceiptItem, Integer> qtyCol;
+    @FXML
+    private TableColumn<ReceiptItem, String> itemCol;
+    @FXML
+    private TableColumn<ReceiptItem, String> priceCol;
     private String photoPath;
     private ImageView imageView;
     private Delivery delivery;
@@ -68,7 +69,10 @@ public class AddEditController {
 
     @FXML
     private void initialize() {
-
+        qtyCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("quantity"));
+        itemCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("description"));
+        priceCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("priceString"));
+        itemsTable.setPlaceholder(new Text("Items not available"));
     }
 
     public void setDelivery(Delivery delivery) {
@@ -83,7 +87,6 @@ public class AddEditController {
         phoneTf.setText(delivery.getPhnum());
         receiptTf.setText(delivery.getReceiptId() + "");
         addrTa.setText(delivery.getAddr());
-        storeNotesTa.setText(delivery.getStoreNotes());
         driverNotesTa.setText(delivery.getDlvNotes());
         completedByTf.setText(delivery.getCompletedBy());
         handedCb.setSelected(delivery.isHandedToCustomer());
@@ -101,6 +104,12 @@ public class AddEditController {
         if (delivery.getPhoto() != null && !delivery.getPhoto().isEmpty()) {
             photoPath = delivery.getPhoto();
             showImage(photoPath);
+        }
+        try {
+            ReceiptLookupResult items = new PatientDBConnection().findPatientsById(delivery.getReceiptId());
+            itemsTable.setItems(FXCollections.observableArrayList(items.getItems()));
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -123,7 +132,7 @@ public class AddEditController {
                         lnameTf.getText(),
                         phoneTf.getText(),
                         addrTa.getText(),
-                        storeNotesTa.getText(),
+                        "",
                         driverNotesTa.getText(),
                         receiptId,
                         photoPath,
@@ -137,7 +146,7 @@ public class AddEditController {
                 delivery.setLname(lnameTf.getText());
                 delivery.setPhnum(phoneTf.getText());
                 delivery.setAddr(addrTa.getText());
-                delivery.setStoreNotes(storeNotesTa.getText());
+                delivery.setStoreNotes("");
                 delivery.setDlvNotes(driverNotesTa.getText());
                 delivery.setReceiptId(Integer.parseInt(receiptTf.getText().trim()));
                 delivery.setCompleted(completedCb.isSelected());
@@ -263,16 +272,8 @@ public class AddEditController {
                 lnameTf.setText(patient.getSurname());
                 phoneTf.setText(patient.getMobileNumber());
                 addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
-                StringBuilder items = new StringBuilder();
-                for (ReceiptItem item : foundPatients.getItems()) {
-                    items.append(item.getQuantity());
-                    items.append("x ");
-                    items.append(item.getDescription());
-                    items.append(" at ");
-                    items.append(item.getPrice());
-                    items.append("\n");
-                }
-                driverNotesTa.setText(items.toString());
+                itemsTable.setItems(FXCollections.observableArrayList(foundPatients.getItems()));
+
         } catch (SQLException e) {
             e.printStackTrace();
             showError(e.getMessage());
@@ -301,6 +302,7 @@ public class AddEditController {
             }
             if (foundPatients.size() > 1) {
                 Patient patient = showPatientSelection(foundPatients);
+                assert patient != null;
                 fnameTf.setText(patient.getFirstName());
                 lnameTf.setText(patient.getSurname());
                 phoneTf.setText(patient.getMobileNumber());
