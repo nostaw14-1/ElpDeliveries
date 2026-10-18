@@ -8,12 +8,14 @@ public class DeliveryGeocodingService {
     private final GeocodingService geocoder = new NominatimGeocodingService();
 
     public void geocodeDelivery(Delivery delivery) throws Exception {
-        GeocodeResult result = geocoder.geocode(delivery.getAddr());
-        if (result == null) {
-            throw new RuntimeException("No results");
+        if (delivery.hasCoordinates()) {
+            GeocodeResult result = geocoder.geocode(delivery.getAddr());
+            if (result == null) {
+                throw new RuntimeException("No results");
+            }
+            dao.updateCoordinates(delivery.getId(), result.getLatitude(), result.getLongitude());
+            delivery.setLatitude(result.getLatitude());
+            delivery.setLongitude(result.getLongitude());
         }
-        dao.updateCoordinates(delivery.getId(), result.getLatitude(), result.getLongitude());
-        delivery.setLatitude(result.getLatitude());
-        delivery.setLongitude(result.getLongitude());
     }
 }

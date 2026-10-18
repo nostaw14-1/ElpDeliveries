@@ -1,14 +1,12 @@
 package com.elpdeliveries.controller;
 
-import java.io.IOException;
+import com.elpdeliveries.util.*;
+
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -28,7 +26,9 @@ import com.elpdeliveries.model.Delivery;
 import com.elpdeliveries.util.ConfigManager;
 import com.elpdeliveries.util.DBConnection;
 
-public class MainController {
+import javax.lang.model.type.NullType;
+
+public class MainController extends Controller<NullType> {
     @FXML
     private TableView<Delivery> deliveryTable;
     @FXML
@@ -101,6 +101,7 @@ public class MainController {
 
         addEditCol.setCellFactory(col -> new TableCell<Delivery, Void>() {
             private final Button btn = new Button("Edit");
+
             {
                 btn.setOnAction(e -> {
                     Delivery selectDelivery = getTableView().getItems().get(getIndex());
@@ -137,7 +138,8 @@ public class MainController {
         addrCol.setCellValueFactory(new PropertyValueFactory<>("addr"));
         dfdCol.setCellValueFactory(new PropertyValueFactory<>("dlvDate"));
         completedCol.setCellValueFactory(
-                cellData -> new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isCompleted()));
+                cellData ->
+                        new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isCompleted()));
 
         completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
 
@@ -189,8 +191,7 @@ public class MainController {
         ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
         try {
             deliveries = dao.getDeliveries(view, date, fname, lname, receiptNum, uncompleted);
-            deliveryTable.setItems(FXCollections
-                    .observableArrayList(deliveries));
+            deliveryTable.setItems(FXCollections.observableArrayList(deliveries));
             todayLabel.setText("Deliveries for Today: " + dao.getTodayCount());
             uncompletedLabel.setText("Uncompleted Deliveries: " + dao.getUncompletedCount());
             countLabel.setText("Showing " + deliveries.size() + " Deliveries");
@@ -222,44 +223,24 @@ public class MainController {
     }
 
     private void openAddEdit(Delivery d) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/elpdeliveries/AddEdit.fxml"));
-            Scene scene = new Scene(loader.load());
-            AddEditController controller = loader.getController();
-            Stage stage = new Stage();
-            if (d != null) {
-                controller.setDelivery(d);
-                stage.setTitle("Editing delivery " + d.getId());
-            } else {
-                controller.setDelivery(null);
-                stage.setTitle("Adding new delivery");
-            }
-            stage.setScene(scene);
-            stage.showAndWait();
-            performSearch();
-        } catch (IOException e) {
-            e.printStackTrace();
+        String title = "Adding new Delivery";
+        if (d != null) {
+            title = d.getId() + "";
         }
+        Stage stage = new Stage();
+        ViewLoader.showStage(d, "/com/elpdeliveries/AddEdit.fxml", title, stage);
+        performSearch();
     }
 
     public void openSettings() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/elpdeliveries/Settings.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage stage = new Stage();
-            stage.setTitle("Settings");
-            stage.setScene(scene);
-            stage.showAndWait();
-            if (dao != null) {
-                dao.close();
-            }
-            dao = new DBConnection();
-            if (deliveryTable != null) {
-                performSearch();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        Stage stage = new Stage();
+        ViewLoader.showStage(null, "/com/elpdeliveries/Settings.fxml", "Settings", stage);
+        if (dao != null) {
+            dao.close();
+        }
+        dao = new DBConnection();
+        if (deliveryTable != null) {
+            performSearch();
         }
     }
 

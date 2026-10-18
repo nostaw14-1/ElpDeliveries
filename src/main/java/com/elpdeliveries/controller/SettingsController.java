@@ -11,7 +11,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class SettingsController {
+import javax.lang.model.type.NullType;
+
+public class SettingsController extends Controller<NullType> {
 
         @FXML
         private TextField ipTf;
