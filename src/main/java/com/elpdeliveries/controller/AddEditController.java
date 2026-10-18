@@ -5,11 +5,9 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.elpdeliveries.model.Delivery;
-import com.elpdeliveries.model.Patient;
-import com.elpdeliveries.model.ReceiptItem;
-import com.elpdeliveries.model.ReceiptLookupResult;
+import com.elpdeliveries.model.*;
 import com.elpdeliveries.util.DBConnection;
+import com.elpdeliveries.util.DeliveryGeocodingService;
 import com.elpdeliveries.util.PatientDBConnection;
 import com.elpdeliveries.util.S3Uploader;
 
@@ -164,7 +162,7 @@ public class AddEditController {
                 delivery.setPhoto(photoPath);
                 dao.updateDelivery(delivery);
             }
-            closeWindow();
+//            closeWindow();
 
         } catch (SQLException e) {
             showError(e.getMessage());
@@ -342,6 +340,20 @@ public class AddEditController {
             showError(e.getMessage());
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @FXML
+    private void handleGeocodeDelivery() {
+        DeliveryGeocodingService geocoder = new DeliveryGeocodingService();
+        try {
+            handleSubmit();
+            geocoder.geocodeDelivery(delivery);
+            dao.updateDelivery(delivery);
+            setDelivery(delivery);
+            driverNotesTa.setText(delivery.getLatitude() + "\n" + delivery.getLongitude());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

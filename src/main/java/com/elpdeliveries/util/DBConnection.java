@@ -93,8 +93,8 @@ public class DBConnection {
 
         while (rs.next()) {
 
-            latitude = (Double) rs.getBigDecimal("latitude").doubleValue();
-            longitude = (Double) rs.getBigDecimal("longitude").doubleValue();
+            latitude = rs.getBigDecimal("latitude") == null ? null : rs.getBigDecimal("latitude").doubleValue();
+            longitude = rs.getBigDecimal("longitude") == null ? null : rs.getBigDecimal("longitude").doubleValue();
             routeOrder = (Integer) rs.getObject("routeOrder");
 
             Delivery delivery = new Delivery(

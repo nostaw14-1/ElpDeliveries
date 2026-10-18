@@ -130,7 +130,8 @@
             <Button mnemonicParsing="false" onAction="#handleFillFromId" text="Fill from Receipt Number" />
             <Button mnemonicParsing="false" onAction="#handleFillFromName" text="Fill From Name" />
             <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDelete" text="Delete" />
-            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#handleGeocodeDelivery" text="Geocode" />
+            <Region prefHeight="200.0" HBox.hgrow="ALWAYS" />
 
             <CheckBox fx:id="completedCb" nodeOrientation="RIGHT_TO_LEFT" text="Completed" />
          </children>

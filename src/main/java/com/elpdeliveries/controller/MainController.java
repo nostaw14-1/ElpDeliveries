@@ -130,7 +130,7 @@ public class MainController {
         addEditCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.10));
         completedCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.095));
 
-        idCol.setCellValueFactory(new PropertyValueFactory<>("routeOrder"));
+        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         rteCol.setCellValueFactory(new PropertyValueFactory<>("routeOrder"));
         fnameCol.setCellValueFactory(new PropertyValueFactory<>("fname"));
         lnameCol.setCellValueFactory(new PropertyValueFactory<>("lname"));
