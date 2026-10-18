@@ -11,21 +11,6 @@ public class Patient {
     public Patient() {
     }
 
-    public Patient(String firstName,
-                   String surname,
-                   String homeAddress,
-                   String homeSuburb,
-                   String phoneNumber,
-                   String mobileNumber) {
-
-        this.firstName = firstName;
-        this.surname = surname;
-        this.homeAddress = homeAddress;
-        this.homeSuburb = homeSuburb;
-        this.phoneNumber = phoneNumber;
-        this.mobileNumber = mobileNumber;
-    }
-
     public String getFirstName() {
         return firstName;
     }

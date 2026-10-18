@@ -34,9 +34,9 @@
 
                   <TextField fx:id="lnameTf" onAction="#handleFillFromName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                  <Label text="Phone Number" GridPane.rowIndex="2" />
+                  <Label text="Mobile Phone" GridPane.rowIndex="2" />
 
-                  <TextField fx:id="phoneTf" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                  <TextField fx:id="phoneTf" GridPane.rowIndex="3" />
 
                   <Label text="Receipt Number" GridPane.rowIndex="4" />
 
@@ -57,6 +57,8 @@
                         <TableColumn fx:id="priceCol" prefWidth="73.0" text="Price" />
                     </columns>
                   </TableView>
+                  <Label text="Home Phone" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="homePhoneTf" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <columnConstraints>
                      <ColumnConstraints percentWidth="50.0" />
                      <ColumnConstraints percentWidth="50.0" />

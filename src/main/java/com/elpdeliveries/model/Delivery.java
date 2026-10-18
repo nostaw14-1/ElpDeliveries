@@ -74,10 +74,6 @@ public class Delivery {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public Date getDlvDate() {
         return dlvDate;
     }
