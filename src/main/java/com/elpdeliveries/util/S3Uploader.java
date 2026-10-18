@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 public class S3Uploader {
     private static String BUCKET;
-    private static Region REGION = Region.AP_SOUTHEAST_2;
+    private static final Region REGION = Region.AP_SOUTHEAST_2;
     private static String ACCESS_KEY;
     private static String SECRET_KEY;
 
@@ -28,7 +28,7 @@ public class S3Uploader {
         S3Client s3 = S3Client.builder().region(REGION)
                 .credentialsProvider(StaticCredentialsProvider.create(credentials)).build();
         String extension = file.getName().substring(file.getName().lastIndexOf("."));
-        String fileName = UUID.randomUUID().toString() + extension;
+        String fileName = UUID.randomUUID() + extension;
         PutObjectRequest request = PutObjectRequest.builder().bucket(BUCKET).key(fileName).build();
         s3.putObject(request, RequestBody.fromFile(file));
         return String.format("https://%s.s3.%s.amazonaws.com/%s", BUCKET, REGION.id(), fileName);

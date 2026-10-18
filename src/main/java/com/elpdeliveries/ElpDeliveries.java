@@ -7,9 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class ElpDeliveries extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/elpdeliveries/Main.fxml"));

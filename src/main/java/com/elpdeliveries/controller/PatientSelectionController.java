@@ -32,8 +32,6 @@ public class PatientSelectionController {
     @FXML
     private TableColumn<Patient, String> addressCol;
 
-    @FXML private CheckBox useMobileCb;
-
     private Patient selectedPatient;
 
     @FXML

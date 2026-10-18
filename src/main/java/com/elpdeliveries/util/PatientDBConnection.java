@@ -93,7 +93,7 @@ public class PatientDBConnection {
 
             item.setDescription(rs.getString("Description"));
             item.setQuantity(rs.getInt("Qty"));
-            item.setPrice(rs.getInt("SellPrice"));
+            item.setPrice(rs.getDouble("SellPrice"));
 
             result.getItems().add(item);
 

@@ -3,11 +3,12 @@ import java.sql.Date;
 
 public class Delivery {
     private int id;
-    private Date createdDate;
+    private final Date createdDate;
     private Date dlvDate;
     private String fname;
     private String lname;
     private String phnum;
+    private String homePhone;
     private String addr;
     private String storeNotes;
     private String dlvNotes;
@@ -15,22 +16,25 @@ public class Delivery {
     private String photo;
     private boolean completed;
     private String completedBy;
-    private Date completedDate;
+    private final Date completedDate;
     private boolean handedToCustomer;
-    private String addEdit;
+    private Double latitude;
+    private Double longitude;
+    private Integer routeOrder;
 
     public Delivery(int id, Date createdDate, Date dlvDate,
-                    String fname, String lname, String phnum,
+                    String fname, String lname, String phnum, String homePhone,
                     String addr, String storeNotes, String dlvNotes,
                     int receiptId, String photo,
                     boolean completed, String completedBy,
-                    Date completedDate, boolean handedToCustomer) {
+                    Date completedDate, boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder) {
         this.id = id;
         this.createdDate = createdDate;
         this.dlvDate = dlvDate;
         this.fname = fname;
         this.lname = lname;
         this.phnum = phnum;
+        this.homePhone = homePhone;
         this.addr = addr;
         this.storeNotes = storeNotes;
         this.dlvNotes = dlvNotes;
@@ -40,20 +44,23 @@ public class Delivery {
         this.completedBy = completedBy;
         this.completedDate = completedDate;
         this.handedToCustomer = handedToCustomer;
-        this.addEdit = "Edit";
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.routeOrder = routeOrder;
     }
 
     public Delivery(Date createdDate, Date dlvDate,
-                    String fname, String lname, String phnum,
+                    String fname, String lname, String phnum, String homePhone,
                     String addr, String storeNotes, String dlvNotes,
                     int receiptId, String photo,
                     boolean completed, String completedBy,
-                    Date completedDate, boolean handedToCustomer) {
+                    Date completedDate, boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder) {
         this.createdDate = createdDate;
         this.dlvDate = dlvDate;
         this.fname = fname;
         this.lname = lname;
         this.phnum = phnum;
+        this.homePhone = homePhone;
         this.addr = addr;
         this.storeNotes = storeNotes;
         this.dlvNotes = dlvNotes;
@@ -63,7 +70,9 @@ public class Delivery {
         this.completedBy = completedBy;
         this.completedDate = completedDate;
         this.handedToCustomer = handedToCustomer;
-        this.addEdit = "Edit";
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.routeOrder = routeOrder;
     }
 
     public int getId() {
@@ -104,6 +113,14 @@ public class Delivery {
 
     public void setPhnum(String phnum) {
         this.phnum = phnum;
+    }
+
+    public String getHomePhone() {
+        return homePhone;
+    }
+
+    public void setHomePhone(String homePhone) {
+        this.homePhone = homePhone;
     }
 
     public String getAddr() {
@@ -166,10 +183,6 @@ public class Delivery {
         return completedDate;
     }
 
-    public void setCompletedDate(Date completedDate) {
-        this.completedDate = completedDate;
-    }
-
     public boolean isHandedToCustomer() {
         return handedToCustomer;
     }
@@ -178,12 +191,32 @@ public class Delivery {
         this.handedToCustomer = handedToCustomer;
     }
 
-    public String getName() {
-        return this.fname + " " + this.lname;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public String getAddEdit() {
-        return addEdit;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Integer getRouteOrder() {
+        return routeOrder;
+    }
+
+    public void setRouteOrder(Integer routeOrder) {
+        this.routeOrder = routeOrder;
+    }
+
+    public boolean hasCoordinates() {
+        return latitude != null && longitude != null;
     }
 
 }

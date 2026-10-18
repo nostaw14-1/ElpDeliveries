@@ -85,7 +85,7 @@
                      <BorderPane fx:id="photoPane" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="300.0" style="-fx-background-color: white; -fx-border-color: black;" VBox.vgrow="NEVER" />
                      <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" spacing="50.0">
                         <children>
-                           <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#handleUpload" text="Upload" />
+                           <Button mnemonicParsing="false" onAction="#handleUpload" text="Upload" />
                            <CheckBox fx:id="handedCb" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="Handed to Customer" />
                         </children>
                         <VBox.margin>

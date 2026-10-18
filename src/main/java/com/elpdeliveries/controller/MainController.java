@@ -32,8 +32,6 @@ public class MainController {
     @FXML
     private TableView<Delivery> deliveryTable;
     @FXML
-    private Button addButton;
-    @FXML
     private Text todayLabel;
     @FXML
     private Text uncompletedLabel;
@@ -46,7 +44,7 @@ public class MainController {
     @FXML
     private TableColumn<Delivery, String> addrCol;
     @FXML
-    private TableColumn<Delivery, String> phCol;
+    private TableColumn<Delivery, String> rteCol;
     @FXML
     private TableColumn<Delivery, Date> dfdCol;
     @FXML
@@ -70,13 +68,11 @@ public class MainController {
     @FXML
     private TextField receiptTf;
     @FXML
-    private TextField createdAtTf;
+    private TextField phoneTf;
     @FXML
-    private TextField completedByTf;
+    private TextField homePhoneTf;
     @FXML
     private TextArea dlvNotesTa;
-    @FXML
-    private TextArea storeNotesTa;
     private String currentView = "All Deliveries";
     private DBConnection dao;
     private Delivery selectedDelivery;
@@ -104,7 +100,7 @@ public class MainController {
         });
 
         addEditCol.setCellFactory(col -> new TableCell<Delivery, Void>() {
-            private Button btn = new Button("Edit");
+            private final Button btn = new Button("Edit");
             {
                 btn.setOnAction(e -> {
                     Delivery selectDelivery = getTableView().getItems().get(getIndex());
@@ -126,19 +122,19 @@ public class MainController {
         });
 
         idCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.05));
+        rteCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.05));
         fnameCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.12));
         lnameCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.12));
-        addrCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.25));
-        phCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.10));
+        addrCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.30));
         dfdCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.16));
         addEditCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.10));
         completedCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.095));
 
-        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        idCol.setCellValueFactory(new PropertyValueFactory<>("routeOrder"));
+        rteCol.setCellValueFactory(new PropertyValueFactory<>("routeOrder"));
         fnameCol.setCellValueFactory(new PropertyValueFactory<>("fname"));
         lnameCol.setCellValueFactory(new PropertyValueFactory<>("lname"));
         addrCol.setCellValueFactory(new PropertyValueFactory<>("addr"));
-        phCol.setCellValueFactory(new PropertyValueFactory<>("phnum"));
         dfdCol.setCellValueFactory(new PropertyValueFactory<>("dlvDate"));
         completedCol.setCellValueFactory(
                 cellData -> new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isCompleted()));
@@ -188,8 +184,8 @@ public class MainController {
 
     }
 
-    private int loadDeliveries(String view, Date date, String fname, String lname, Integer receiptNum,
-            Boolean uncompleted) {
+    private void loadDeliveries(String view, Date date, String fname, String lname, Integer receiptNum,
+                                Boolean uncompleted) {
         ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
         try {
             deliveries = dao.getDeliveries(view, date, fname, lname, receiptNum, uncompleted);
@@ -205,10 +201,9 @@ public class MainController {
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
-        return deliveries.size();
     }
 
-    private int loadDeliveries(String view) {
+    private void loadDeliveries(String view) {
         ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
         try {
             deliveries = dao.getDeliveries(view, null, null, null, null, null);
@@ -224,7 +219,6 @@ public class MainController {
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
-        return deliveries.size();
     }
 
     private void openAddEdit(Delivery d) {
@@ -273,17 +267,15 @@ public class MainController {
         selectedDelivery = d;
         if (d == null) {
             receiptTf.clear();
-            createdAtTf.clear();
-            completedByTf.clear();
+            phoneTf.clear();
+            homePhoneTf.clear();
             dlvNotesTa.clear();
-            storeNotesTa.clear();
             return;
         }
         receiptTf.setText(String.valueOf(d.getReceiptId()));
-        createdAtTf.setText(d.getCreatedDate() == null ? "" : d.getCreatedDate() + "");
-        completedByTf.setText(d.getCompletedBy() == null ? "" : d.getCompletedBy());
+        phoneTf.setText(d.getPhnum() == null ? "" : d.getPhnum());
+        homePhoneTf.setText(d.getHomePhone() == null ? "" : d.getHomePhone());
         dlvNotesTa.setText(d.getDlvNotes() == null ? "" : d.getDlvNotes());
-        storeNotesTa.setText(d.getStoreNotes() == null ? "" : d.getStoreNotes());
 
     }
 }

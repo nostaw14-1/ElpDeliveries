@@ -33,6 +33,8 @@ public class AddEditController {
     @FXML
     private TextField phoneTf;
     @FXML
+    private TextField homePhoneTf;
+    @FXML
     private TextField receiptTf;
     @FXML
     private TextField createdAtTf;
@@ -65,7 +67,7 @@ public class AddEditController {
     private String photoPath;
     private ImageView imageView;
     private Delivery delivery;
-    private DBConnection dao = new DBConnection();
+    private final DBConnection dao = new DBConnection();
 
     @FXML
     private void initialize() {
@@ -85,6 +87,7 @@ public class AddEditController {
         fnameTf.setText(delivery.getFname());
         lnameTf.setText(delivery.getLname());
         phoneTf.setText(delivery.getPhnum());
+        homePhoneTf.setText(delivery.getHomePhone());
         receiptTf.setText(delivery.getReceiptId() + "");
         addrTa.setText(delivery.getAddr());
         driverNotesTa.setText(delivery.getDlvNotes());
@@ -109,7 +112,7 @@ public class AddEditController {
             ReceiptLookupResult items = new PatientDBConnection().findPatientsById(delivery.getReceiptId());
             itemsTable.setItems(FXCollections.observableArrayList(items.getItems()));
         } catch (SQLException e) {
-            e.printStackTrace();
+            showError(e.getMessage());
         }
     }
 
@@ -117,7 +120,7 @@ public class AddEditController {
     private void handleSubmit() {
         try {
             Date deliveryDate = null;
-            Integer receiptId = null;
+            int receiptId = 0;
             if (dfdDatePicker.getValue() != null) {
                 deliveryDate = Date.valueOf(dfdDatePicker.getValue());
             }
@@ -131,6 +134,7 @@ public class AddEditController {
                         fnameTf.getText(),
                         lnameTf.getText(),
                         phoneTf.getText(),
+                        homePhoneTf.getText(),
                         addrTa.getText(),
                         "",
                         driverNotesTa.getText(),
@@ -139,12 +143,16 @@ public class AddEditController {
                         completedCb.isSelected(),
                         completedByTf.getText(),
                         null,
-                        handedCb.isSelected());
+                        handedCb.isSelected(),
+                    null,
+                        null,
+                        null);
                 dao.addDelivery(newDelivery);
             } else {
                 delivery.setFname(fnameTf.getText());
                 delivery.setLname(lnameTf.getText());
                 delivery.setPhnum(phoneTf.getText());
+                delivery.setHomePhone(homePhoneTf.getText());
                 delivery.setAddr(addrTa.getText());
                 delivery.setStoreNotes("");
                 delivery.setDlvNotes(driverNotesTa.getText());
@@ -207,7 +215,7 @@ public class AddEditController {
     private void handleDelete() {
         try {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setHeaderText("Confirm");
+            alert.setHeaderText("Confirm");  
             alert.setContentText("Are you sure you want to delete?");
             if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 if (delivery != null) {
@@ -218,7 +226,7 @@ public class AddEditController {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            showError(e.getMessage());
         }
     }
 
@@ -271,20 +279,21 @@ public class AddEditController {
                 fnameTf.setText(patient.getFirstName());
                 lnameTf.setText(patient.getSurname());
                 phoneTf.setText(patient.getMobileNumber());
+                homePhoneTf.setText(patient.getPhoneNumber());
                 addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
                 itemsTable.setItems(FXCollections.observableArrayList(foundPatients.getItems()));
 
         } catch (SQLException e) {
-            e.printStackTrace();
             showError(e.getMessage());
         }
     }
 
     @FXML
     private void handleFillFromName() {
+        itemsTable.getItems().clear();
         PatientDBConnection patientDao = new PatientDBConnection();
         try {
-            if (fnameTf.getText().trim() == null && lnameTf.getText().trim() == null) {
+            if (fnameTf.getText().isBlank() && lnameTf.getText().isBlank()) {
                 return;
             }
 
@@ -298,6 +307,7 @@ public class AddEditController {
                 fnameTf.setText(patient.getFirstName());
                 lnameTf.setText(patient.getSurname());
                 phoneTf.setText(patient.getMobileNumber());
+                homePhoneTf.setText(patient.getPhoneNumber());
                 addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
             }
             if (foundPatients.size() > 1) {
@@ -306,10 +316,10 @@ public class AddEditController {
                 fnameTf.setText(patient.getFirstName());
                 lnameTf.setText(patient.getSurname());
                 phoneTf.setText(patient.getMobileNumber());
+                homePhoneTf.setText(patient.getPhoneNumber());
                 addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             showError(e.getMessage());
         }
     }
@@ -329,8 +339,8 @@ public class AddEditController {
             stage.showAndWait();
             return controller.getSelectedPatient();
         } catch (Exception e) {
-            e.printStackTrace();
             showError(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

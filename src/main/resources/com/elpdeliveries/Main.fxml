@@ -38,10 +38,10 @@
             <TableView fx:id="deliveryTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <columns>
                 <TableColumn fx:id="idCol" resizable="false" text="#" />
+                  <TableColumn fx:id="rteCol" resizable="false" text="Rte #" />
                 <TableColumn fx:id="fnameCol" resizable="false" text="First Name" />
                   <TableColumn fx:id="lnameCol" resizable="false" text="Last Name" />
                   <TableColumn fx:id="addrCol" resizable="false" text="Addresss" />
-                  <TableColumn fx:id="phCol" resizable="false" text="Phone" />
                   <TableColumn fx:id="dfdCol" resizable="false" text="Date for Delivery" />
                   <TableColumn fx:id="addEditCol" resizable="false" text="Edit" />
                   <TableColumn fx:id="completedCol" resizable="false" text="Completed" />
@@ -92,7 +92,7 @@
                </VBox.margin>
             </GridPane>
             <Separator prefWidth="200.0" />
-            <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
+            <GridPane alignment="CENTER" hgap="10.0" vgap="10.0" VBox.vgrow="ALWAYS">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" />
                   <ColumnConstraints hgrow="ALWAYS" />
@@ -105,31 +105,27 @@
                   <RowConstraints vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="6.399987792968744" vgrow="SOMETIMES" />
                   <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="10.0" minHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="20.800012207031273" minHeight="3.2000366210937727" prefHeight="12.000024414062523" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
                   <Label text="Receipt Num:" GridPane.rowIndex="1" />
-                  <Label text="Created At:" GridPane.rowIndex="2" />
-                  <Label text="Completed By:" GridPane.rowIndex="3" />
-                  <TextField fx:id="createdAtTf" editable="false" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                  <TextField fx:id="completedByTf" editable="false" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                  <Label text="Mobile Phone:" GridPane.rowIndex="2" />
+                  <Label text="Home Phone:" GridPane.rowIndex="3" />
+                  <TextField fx:id="phoneTf" editable="false" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                  <TextField fx:id="homePhoneTf" editable="false" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
                   <Label text="Delivery Preview" GridPane.columnSpan="2" GridPane.halignment="CENTER">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
-                  <Label text="Driver Notes:" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                  <Label text="Notes:" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                   <TextField fx:id="receiptTf" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextArea fx:id="dlvNotesTa" editable="false" maxHeight="60.0" maxWidth="1.7976931348623157E308" prefHeight="60.0" prefRowCount="2" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
-                  <TextArea fx:id="storeNotesTa" editable="false" maxHeight="60.0" prefHeight="80.0" prefRowCount="3" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="8" />
-                  <Label text="Store Notes:" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+                  <TextArea fx:id="dlvNotesTa" editable="false" maxWidth="1.7976931348623157E308" prefHeight="60.0" prefRowCount="2" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
                   <Separator GridPane.columnSpan="2" GridPane.rowIndex="4" />
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleEdit" text="Edit" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleEdit" text="Edit" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" />
                </children>
                <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets bottom="20.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </GridPane>
          </children>
