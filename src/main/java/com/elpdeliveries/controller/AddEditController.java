@@ -1,16 +1,13 @@
 package com.elpdeliveries.controller;
 
-import java.io.File;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.util.List;
-
-import com.elpdeliveries.model.*;
+import com.elpdeliveries.model.Delivery;
+import com.elpdeliveries.model.Patient;
+import com.elpdeliveries.model.ReceiptItem;
+import com.elpdeliveries.model.ReceiptLookupResult;
 import com.elpdeliveries.util.DBConnection;
 import com.elpdeliveries.util.DeliveryGeocodingService;
 import com.elpdeliveries.util.PatientDBConnection;
 import com.elpdeliveries.util.S3Uploader;
-
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,7 +20,13 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.util.List;
+
 public class AddEditController {
+    private final DBConnection dao = new DBConnection();
     @FXML
     private TextField fnameTf;
     @FXML
@@ -65,7 +68,6 @@ public class AddEditController {
     private String photoPath;
     private ImageView imageView;
     private Delivery delivery;
-    private final DBConnection dao = new DBConnection();
 
     @FXML
     private void initialize() {
@@ -142,7 +144,7 @@ public class AddEditController {
                         completedByTf.getText(),
                         null,
                         handedCb.isSelected(),
-                    null,
+                        null,
                         null,
                         null);
                 dao.addDelivery(newDelivery);
@@ -162,7 +164,7 @@ public class AddEditController {
                 delivery.setPhoto(photoPath);
                 dao.updateDelivery(delivery);
             }
-//            closeWindow();
+            closeWindow();
 
         } catch (SQLException e) {
             showError(e.getMessage());
@@ -213,7 +215,7 @@ public class AddEditController {
     private void handleDelete() {
         try {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setHeaderText("Confirm");  
+            alert.setHeaderText("Confirm");
             alert.setContentText("Are you sure you want to delete?");
             if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 if (delivery != null) {
@@ -273,13 +275,13 @@ public class AddEditController {
                 showError("No Matches Found");
                 return;
             }
-                Patient patient = foundPatients.getPatient();
-                fnameTf.setText(patient.getFirstName());
-                lnameTf.setText(patient.getSurname());
-                phoneTf.setText(patient.getMobileNumber());
-                homePhoneTf.setText(patient.getPhoneNumber());
-                addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
-                itemsTable.setItems(FXCollections.observableArrayList(foundPatients.getItems()));
+            Patient patient = foundPatients.getPatient();
+            fnameTf.setText(patient.getFirstName());
+            lnameTf.setText(patient.getSurname());
+            phoneTf.setText(patient.getMobileNumber());
+            homePhoneTf.setText(patient.getPhoneNumber());
+            addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
+            itemsTable.setItems(FXCollections.observableArrayList(foundPatients.getItems()));
 
         } catch (SQLException e) {
             showError(e.getMessage());
