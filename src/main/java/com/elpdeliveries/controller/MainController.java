@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
+import com.elpdeliveries.util.RouteOptimizationService;
+import com.elpdeliveries.util.VroomRouteOptimizationService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -76,33 +79,41 @@ public class MainController {
     private String currentView = "All Deliveries";
     private DBConnection dao;
     private Delivery selectedDelivery;
+    private final RouteOptimizationService VROS = new VroomRouteOptimizationService();
 
     @FXML
     public void initialize() {
-        dao = new DBConnection();
+        try {
+            dao = new DBConnection();
+        } catch (Exception e) {
+            showError(e);
+            openSettings();
+        }
         if (dao.getConnection() == null || !ConfigManager.exists()) {
             openSettings();
-            dao = new DBConnection();
+            try {
+                dao = new DBConnection();
+            } catch (Exception e) {
+                showError(e);
+            }
             if (dao.getConnection() == null) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText("Database Connection Failed");
-                alert.setContentText("Please configure a valid database connection");
-                alert.showAndWait();
+                showError(new Exception("Please configure a valid db connection!"));
                 return;
             }
         }
         deliveryTable.setPlaceholder(new Text("No deliveries to show"));
         loadDeliveries(currentView);
 
-        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+        tabPane.getSelectionModel().selectedItemProperty().addListener((_, _, newTab) -> {
             currentView = newTab.getText();
             performSearch();
         });
 
-        addEditCol.setCellFactory(col -> new TableCell<Delivery, Void>() {
+        addEditCol.setCellFactory(_ -> new TableCell<>() {
             private final Button btn = new Button("Edit");
+
             {
-                btn.setOnAction(e -> {
+                btn.setOnAction(_ -> {
                     Delivery selectDelivery = getTableView().getItems().get(getIndex());
                     openAddEdit(selectDelivery);
                 });
@@ -141,9 +152,8 @@ public class MainController {
 
         completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
 
-        deliveryTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            showPreview(newSelection);
-        });
+        deliveryTable.getSelectionModel().selectedItemProperty()
+                .addListener((_, _, newSelection) -> showPreview(newSelection));
 
     }
 
@@ -170,7 +180,30 @@ public class MainController {
         openAddEdit(selectedDelivery);
     }
 
-    private void performSearch() {
+    @FXML
+    private void handleGenerateRoute() {
+        try {
+            List<Delivery> deliveries = performSearch();
+            List<Integer> orderedIds = VROS.optimiseRoute(deliveries,
+                    -33.7675529,
+                    151.1875328);
+
+            dao.updateRouteOrders(orderedIds);
+            performSearch();
+        } catch (Exception e) {
+            showError(e);
+        }
+    }
+
+    private void showError(Exception e) {
+        e.printStackTrace();
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText(e.getClass().getSimpleName());
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
+    }
+
+    private List<Delivery> performSearch() {
         Date date = null;
         Integer receiptNum = null;
         if (searchDatePicker.getValue() != null) {
@@ -179,45 +212,37 @@ public class MainController {
         if (!receiptField.getText().trim().isEmpty()) {
             receiptNum = Integer.parseInt(receiptField.getText());
         }
-        loadDeliveries(currentView, date, fnameField.getText(), lnameField.getText(), receiptNum,
+        return loadDeliveries(currentView, date, fnameField.getText(), lnameField.getText(), receiptNum,
                 uncompletedCB.isSelected());
 
     }
 
-    private void loadDeliveries(String view, Date date, String fname, String lname, Integer receiptNum,
-                                Boolean uncompleted) {
-        ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
+    private List<Delivery> loadDeliveries(String view, Date date, String fname, String lname, Integer receiptNum,
+                                          Boolean uncompleted) {
         try {
-            deliveries = dao.getDeliveries(view, date, fname, lname, receiptNum, uncompleted);
+            ArrayList<Delivery> deliveries = dao.getDeliveries(view, date, fname, lname, receiptNum, uncompleted);
             deliveryTable.setItems(FXCollections
                     .observableArrayList(deliveries));
             todayLabel.setText("Deliveries for Today: " + dao.getTodayCount());
             uncompletedLabel.setText("Uncompleted Deliveries: " + dao.getUncompletedCount());
             countLabel.setText("Showing " + deliveries.size() + " Deliveries");
+            return deliveries;
         } catch (SQLException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Database Error");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            showError(e);
+            return null;
         }
     }
 
     private void loadDeliveries(String view) {
-        ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
         try {
-            deliveries = dao.getDeliveries(view, null, null, null, null, null);
+            ArrayList<Delivery> deliveries = dao.getDeliveries(view, null, null, null, null, null);
             deliveryTable
                     .setItems(FXCollections.observableArrayList(deliveries));
             todayLabel.setText("Deliveries for Today: " + dao.getTodayCount());
             uncompletedLabel.setText("Uncompleted Deliveries: " + dao.getUncompletedCount());
             countLabel.setText("Showing " + deliveries.size() + " Deliveries");
         } catch (SQLException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Database Error");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            showError(e);
         }
     }
 
@@ -238,7 +263,7 @@ public class MainController {
             stage.showAndWait();
             performSearch();
         } catch (IOException e) {
-            e.printStackTrace();
+            showError(e);
         }
     }
 
@@ -253,13 +278,17 @@ public class MainController {
             if (dao != null) {
                 dao.close();
             }
-            dao = new DBConnection();
+            try {
+                dao = new DBConnection();
+            } catch (Exception e) {
+                showError(e);
+            }
             if (deliveryTable != null) {
                 performSearch();
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            showError(e);
         }
     }
 

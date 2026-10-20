@@ -11,6 +11,7 @@ import java.util.List;
 public class VroomRouteOptimizationService implements RouteOptimizationService {
     private static final String VROOM_URL = "http://192.168.0.2:3000";
     private final HttpClient client = HttpClient.newHttpClient();
+    
     @Override
     public List<Integer> optimiseRoute(List<Delivery> deliveries, double depotLat, double depotLong) throws Exception{
         String requestJson = VroomJsonUtil.buildRequest(deliveries, depotLat, depotLong);

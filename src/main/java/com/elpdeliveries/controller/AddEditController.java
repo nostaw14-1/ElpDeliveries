@@ -1,13 +1,7 @@
 package com.elpdeliveries.controller;
 
-import com.elpdeliveries.model.Delivery;
-import com.elpdeliveries.model.Patient;
-import com.elpdeliveries.model.ReceiptItem;
-import com.elpdeliveries.model.ReceiptLookupResult;
-import com.elpdeliveries.util.DBConnection;
-import com.elpdeliveries.util.DeliveryGeocodingService;
-import com.elpdeliveries.util.PatientDBConnection;
-import com.elpdeliveries.util.S3Uploader;
+import com.elpdeliveries.model.*;
+import com.elpdeliveries.util.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AddEditController {
-    private final DBConnection dao = new DBConnection();
+    private DBConnection dao;
     @FXML
     private TextField fnameTf;
     @FXML
@@ -71,6 +65,12 @@ public class AddEditController {
 
     @FXML
     private void initialize() {
+        try {
+            dao = new DBConnection();
+        } catch (Exception e) {
+            showError(e);
+
+        }
         qtyCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("quantity"));
         itemCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("description"));
         priceCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("priceString"));
@@ -111,13 +111,14 @@ public class AddEditController {
         try {
             ReceiptLookupResult items = new PatientDBConnection().findPatientsById(delivery.getReceiptId());
             itemsTable.setItems(FXCollections.observableArrayList(items.getItems()));
-        } catch (SQLException e) {
-            showError(e.getMessage());
+        } catch (Exception e) {
+            showError(e);
         }
     }
 
     @FXML
     private void handleSubmit() {
+        DeliveryGeocodingService geocoder = new DeliveryGeocodingService();
         try {
             Date deliveryDate = null;
             int receiptId = 0;
@@ -147,6 +148,7 @@ public class AddEditController {
                         null,
                         null,
                         null);
+                geocoder.geocodeDelivery(newDelivery);
                 dao.addDelivery(newDelivery);
             } else {
                 delivery.setFname(fnameTf.getText());
@@ -162,21 +164,21 @@ public class AddEditController {
                 delivery.setHandedToCustomer(handedCb.isSelected());
                 delivery.setDlvDate(deliveryDate);
                 delivery.setPhoto(photoPath);
+                geocoder.geocodeDelivery(delivery);
                 dao.updateDelivery(delivery);
             }
             closeWindow();
 
-        } catch (SQLException e) {
-            showError(e.getMessage());
-        } catch (NumberFormatException e) {
-            showError("Receipt number must be numeric");
+        } catch (Exception e) {
+            showError(e);
         }
     }
 
-    private void showError(String message) {
+    private void showError(Exception e) {
+        e.printStackTrace();
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText("Error");
-        alert.setContentText(message);
+        alert.setHeaderText(e.getClass().getSimpleName());
+        alert.setContentText(e.getMessage());
         alert.showAndWait();
     }
 
@@ -226,7 +228,7 @@ public class AddEditController {
             }
 
         } catch (SQLException e) {
-            showError(e.getMessage());
+            showError(e);
         }
     }
 
@@ -264,15 +266,15 @@ public class AddEditController {
 
     @FXML
     private void handleFillFromId() {
-        PatientDBConnection patientDao = new PatientDBConnection();
         try {
+            PatientDBConnection patientDao = new PatientDBConnection();
             if (receiptTf.getText().isBlank()) {
                 return;
             }
 
             ReceiptLookupResult foundPatients = patientDao.findPatientsById(Integer.parseInt(receiptTf.getText().trim()));
             if (foundPatients.getItems().isEmpty()) {
-                showError("No Matches Found");
+                showError(new Exception("No matches found"));
                 return;
             }
             Patient patient = foundPatients.getPatient();
@@ -283,23 +285,24 @@ public class AddEditController {
             addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
             itemsTable.setItems(FXCollections.observableArrayList(foundPatients.getItems()));
 
-        } catch (SQLException e) {
-            showError(e.getMessage());
+        } catch (Exception e) {
+            showError(e);
         }
     }
 
     @FXML
     private void handleFillFromName() {
         itemsTable.getItems().clear();
-        PatientDBConnection patientDao = new PatientDBConnection();
+
         try {
+            PatientDBConnection patientDao = new PatientDBConnection();
             if (fnameTf.getText().isBlank() && lnameTf.getText().isBlank()) {
                 return;
             }
 
             List<Patient> foundPatients = patientDao.findPatientsByName(fnameTf.getText(), lnameTf.getText());
             if (foundPatients.isEmpty()) {
-                showError("No Matches Found");
+                showError(new Exception("No matches found"));
                 return;
             }
             if (foundPatients.size() == 1) {
@@ -319,8 +322,8 @@ public class AddEditController {
                 homePhoneTf.setText(patient.getPhoneNumber());
                 addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
             }
-        } catch (SQLException e) {
-            showError(e.getMessage());
+        } catch (Exception e) {
+            showError(e);
         }
     }
 
@@ -339,23 +342,8 @@ public class AddEditController {
             stage.showAndWait();
             return controller.getSelectedPatient();
         } catch (Exception e) {
-            showError(e.getMessage());
-            e.printStackTrace();
+            showError(e);
             return null;
-        }
-    }
-
-    @FXML
-    private void handleGeocodeDelivery() {
-        DeliveryGeocodingService geocoder = new DeliveryGeocodingService();
-        try {
-            handleSubmit();
-            geocoder.geocodeDelivery(delivery);
-            dao.updateDelivery(delivery);
-            setDelivery(delivery);
-            driverNotesTa.setText(delivery.getLatitude() + "\n" + delivery.getLongitude());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 

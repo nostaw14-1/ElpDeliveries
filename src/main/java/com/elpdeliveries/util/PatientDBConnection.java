@@ -12,10 +12,9 @@ public class PatientDBConnection {
 
     private Connection conn;
 
-    public PatientDBConnection() {
+    public PatientDBConnection() throws Exception {
 
         String url;
-        try {
             url = "jdbc:sqlserver://"
                     + ConfigManager.getSqlServer()
                     + ";databaseName="
@@ -26,9 +25,6 @@ public class PatientDBConnection {
                     url,
                     ConfigManager.getSqlUsername(),
                     ConfigManager.getSqlPassword());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public ReceiptLookupResult findPatientsById(
@@ -70,23 +66,7 @@ public class PatientDBConnection {
             if (patient == null) {
                 patient = new Patient();
 
-                patient.setFirstName(
-                        rs.getString("FirstName"));
-
-                patient.setSurname(
-                        rs.getString("Surname"));
-
-                patient.setHomeAddress(
-                        rs.getString("HomeAddress"));
-
-                patient.setHomeSuburb(
-                        rs.getString("HomeSuburb"));
-
-                patient.setPhoneNumber(
-                        rs.getString("PhoneNumber"));
-
-                patient.setMobileNumber(
-                        rs.getString("MobileNumber"));
+                setProps(rs, patient);
             }
 
             ReceiptItem item = new ReceiptItem();
@@ -102,6 +82,26 @@ public class PatientDBConnection {
         }
 
         return result;
+    }
+
+    private void setProps(ResultSet rs, Patient patient) throws SQLException {
+        patient.setFirstName(
+                rs.getString("FirstName"));
+
+        patient.setSurname(
+                rs.getString("Surname"));
+
+        patient.setHomeAddress(
+                rs.getString("HomeAddress"));
+
+        patient.setHomeSuburb(
+                rs.getString("HomeSuburb"));
+
+        patient.setPhoneNumber(
+                rs.getString("PhoneNumber"));
+
+        patient.setMobileNumber(
+                rs.getString("MobileNumber"));
     }
 
     public List<Patient> findPatientsByName(
@@ -136,23 +136,7 @@ public class PatientDBConnection {
 
             Patient patient = new Patient();
 
-            patient.setFirstName(
-                    rs.getString("FirstName"));
-
-            patient.setSurname(
-                    rs.getString("Surname"));
-
-            patient.setHomeAddress(
-                    rs.getString("HomeAddress"));
-
-            patient.setHomeSuburb(
-                    rs.getString("HomeSuburb"));
-
-            patient.setPhoneNumber(
-                    rs.getString("PhoneNumber"));
-
-            patient.setMobileNumber(
-                    rs.getString("MobileNumber"));
+            setProps(rs, patient);
 
             patients.add(patient);
         }
