@@ -7,11 +7,12 @@ import com.elpdeliveries.model.Patient;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
-public class PatientSelectionController extends Controller<List<Patient>> {
+public class PatientSelectionController {
 
     @FXML
     private TableView<Patient> patientTable;

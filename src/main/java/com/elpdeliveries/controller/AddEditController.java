@@ -23,7 +23,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class AddEditController extends Controller<Delivery> {
+public class AddEditController {
     @FXML
     private TextField fnameTf;
     @FXML
@@ -73,7 +73,6 @@ public class AddEditController extends Controller<Delivery> {
         itemCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("description"));
         priceCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("priceString"));
         itemsTable.setPlaceholder(new Text("Items not available"));
-        setDelivery(model);
     }
 
     public void setDelivery(Delivery delivery) {
