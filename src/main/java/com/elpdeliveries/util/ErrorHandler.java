@@ -12,7 +12,7 @@ public class ErrorHandler {
     public static void showError(String message, Throwable throwable) {
         AppLogger.error(message, throwable);
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
+        alert.setTitle(throwable.getClass().getSimpleName());
         alert.setHeaderText(message);
 
         StringWriter sw = new StringWriter();

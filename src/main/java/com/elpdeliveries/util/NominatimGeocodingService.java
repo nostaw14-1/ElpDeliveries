@@ -16,7 +16,7 @@ public class NominatimGeocodingService implements GeocodingService {
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public GeocodeResult geocode(String address) throws IOException {
+    public GeocodeResult geocode(String address) throws IOException, InterruptedException {
         String encoded = URLEncoder.encode(address, StandardCharsets.UTF_8);
         String url =
                 "https://nominatim.openstreetmap.org/search" +
@@ -39,9 +39,9 @@ public class NominatimGeocodingService implements GeocodingService {
 
             return new GeocodeResult(latitude, longitude);
 
-        } catch (InterruptedException e) {
-            ErrorHandler.showError(e.getMessage(), e);
-            return null;
+        } catch (Exception e) {
+            AppLogger.error("Failed to geocode address " + address, e);
+            throw e;
         }
 
     }
