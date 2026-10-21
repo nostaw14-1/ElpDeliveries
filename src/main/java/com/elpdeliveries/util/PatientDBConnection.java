@@ -20,6 +20,8 @@ public class PatientDBConnection {
                 + ConfigManager.getSqlDatabase()
                 + ";encrypt=true;"
                 + "trustServerCertificate=true;";
+        Class.forName(
+                "com.microsoft.sqlserver.jdbc.SQLServerDriver");
         conn = DriverManager.getConnection(
                 url,
                 ConfigManager.getSqlUsername(),
