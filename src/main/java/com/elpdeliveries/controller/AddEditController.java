@@ -68,7 +68,7 @@ public class AddEditController {
         try {
             dao = new DBConnection();
         } catch (Exception e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
 
         }
         qtyCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("quantity"));
@@ -112,7 +112,7 @@ public class AddEditController {
             ReceiptLookupResult items = new PatientDBConnection().findPatientsById(delivery.getReceiptId());
             itemsTable.setItems(FXCollections.observableArrayList(items.getItems()));
         } catch (Exception e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
         }
     }
 
@@ -170,17 +170,10 @@ public class AddEditController {
             closeWindow();
 
         } catch (Exception e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
         }
     }
 
-    private void showError(Exception e) {
-        e.printStackTrace();
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(e.getClass().getSimpleName());
-        alert.setContentText(e.getMessage());
-        alert.showAndWait();
-    }
 
     private void closeWindow() {
         Stage stage = (Stage) fnameTf.getScene().getWindow();
@@ -206,10 +199,7 @@ public class AddEditController {
             photoPath = S3Uploader.upload(file);
             showImage(photoPath);
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Upload Failed");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            ErrorHandler.showError(e.getMessage(), e);
         }
     }
 
@@ -228,7 +218,7 @@ public class AddEditController {
             }
 
         } catch (SQLException e) {
-            showError(e);
+            ErrorHandler.showError("Delete failed!", e);
         }
     }
 
@@ -274,7 +264,7 @@ public class AddEditController {
 
             ReceiptLookupResult foundPatients = patientDao.findPatientsById(Integer.parseInt(receiptTf.getText().trim()));
             if (foundPatients.getItems().isEmpty()) {
-                showError(new Exception("No matches found"));
+                ErrorHandler.showError("No matches found", new Exception("No matches found"));
                 return;
             }
             Patient patient = foundPatients.getPatient();
@@ -286,7 +276,7 @@ public class AddEditController {
             itemsTable.setItems(FXCollections.observableArrayList(foundPatients.getItems()));
 
         } catch (Exception e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
         }
     }
 
@@ -302,7 +292,7 @@ public class AddEditController {
 
             List<Patient> foundPatients = patientDao.findPatientsByName(fnameTf.getText(), lnameTf.getText());
             if (foundPatients.isEmpty()) {
-                showError(new Exception("No matches found"));
+                ErrorHandler.showError("No matches found", new Exception("No matches found"));
                 return;
             }
             if (foundPatients.size() == 1) {
@@ -323,7 +313,7 @@ public class AddEditController {
                 addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
             }
         } catch (Exception e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
         }
     }
 
@@ -342,7 +332,7 @@ public class AddEditController {
             stage.showAndWait();
             return controller.getSelectedPatient();
         } catch (Exception e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
             return null;
         }
     }

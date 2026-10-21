@@ -6,13 +6,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.elpdeliveries.util.RouteOptimizationService;
-import com.elpdeliveries.util.VroomRouteOptimizationService;
+import com.elpdeliveries.util.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
@@ -28,8 +26,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import com.elpdeliveries.model.Delivery;
-import com.elpdeliveries.util.ConfigManager;
-import com.elpdeliveries.util.DBConnection;
 
 public class MainController {
     @FXML
@@ -86,7 +82,7 @@ public class MainController {
         try {
             dao = new DBConnection();
         } catch (Exception e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
             openSettings();
         }
         if (dao.getConnection() == null || !ConfigManager.exists()) {
@@ -94,10 +90,10 @@ public class MainController {
             try {
                 dao = new DBConnection();
             } catch (Exception e) {
-                showError(e);
+               ErrorHandler.showError(e.getMessage(), e);
             }
             if (dao.getConnection() == null) {
-                showError(new Exception("Please configure a valid db connection!"));
+                ErrorHandler.showError("Please configure a valid db connection!", new Exception());
                 return;
             }
         }
@@ -191,16 +187,8 @@ public class MainController {
             dao.updateRouteOrders(orderedIds);
             performSearch();
         } catch (Exception e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
         }
-    }
-
-    private void showError(Exception e) {
-        e.printStackTrace();
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(e.getClass().getSimpleName());
-        alert.setContentText(e.getMessage());
-        alert.showAndWait();
     }
 
     private List<Delivery> performSearch() {
@@ -228,7 +216,7 @@ public class MainController {
             countLabel.setText("Showing " + deliveries.size() + " Deliveries");
             return deliveries;
         } catch (SQLException e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
             return null;
         }
     }
@@ -242,7 +230,7 @@ public class MainController {
             uncompletedLabel.setText("Uncompleted Deliveries: " + dao.getUncompletedCount());
             countLabel.setText("Showing " + deliveries.size() + " Deliveries");
         } catch (SQLException e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
         }
     }
 
@@ -263,7 +251,7 @@ public class MainController {
             stage.showAndWait();
             performSearch();
         } catch (IOException e) {
-            showError(e);
+            ErrorHandler.showError(e.getMessage(), e);
         }
     }
 
@@ -278,17 +266,13 @@ public class MainController {
             if (dao != null) {
                 dao.close();
             }
-            try {
-                dao = new DBConnection();
-            } catch (Exception e) {
-                showError(e);
-            }
+            dao = new DBConnection();
             if (deliveryTable != null) {
                 performSearch();
             }
 
-        } catch (IOException e) {
-            showError(e);
+        } catch (Exception e) {
+            ErrorHandler.showError(e.getMessage(), e);
         }
     }
 

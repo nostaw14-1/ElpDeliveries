@@ -1,39 +1,44 @@
 package com.elpdeliveries.util;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.elpdeliveries.model.Patient;
 import com.elpdeliveries.model.ReceiptItem;
 import com.elpdeliveries.model.ReceiptLookupResult;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class PatientDBConnection {
 
-    private Connection conn;
+    private final Connection conn;
 
     public PatientDBConnection() throws Exception {
-
         String url;
-            url = "jdbc:sqlserver://"
-                    + ConfigManager.getSqlServer()
-                    + ";databaseName="
-                    + ConfigManager.getSqlDatabase()
-                    + ";encrypt=true;"
-                    + "trustServerCertificate=true;";
-            conn = DriverManager.getConnection(
-                    url,
-                    ConfigManager.getSqlUsername(),
-                    ConfigManager.getSqlPassword());
+        url = "jdbc:sqlserver://"
+                + ConfigManager.getSqlServer()
+                + ";databaseName="
+                + ConfigManager.getSqlDatabase()
+                + ";encrypt=true;"
+                + "trustServerCertificate=true;";
+        conn = DriverManager.getConnection(
+                url,
+                ConfigManager.getSqlUsername(),
+                ConfigManager.getSqlPassword());
+        AppLogger.info("Connecting to " + url);
     }
 
-    public ReceiptLookupResult findPatientsById(
-            int receiptId)
-            throws SQLException {
+    private void setProps(ResultSet rs, Patient patient) throws SQLException {
+        patient.setFirstName(rs.getString("FirstName"));
+        patient.setSurname(rs.getString("Surname"));
+        patient.setHomeAddress(rs.getString("HomeAddress"));
+        patient.setHomeSuburb(rs.getString("HomeSuburb"));
+        patient.setPhoneNumber(rs.getString("PhoneNumber"));
+        patient.setMobileNumber(rs.getString("MobileNumber"));
+    }
 
+    public ReceiptLookupResult findPatientsById(int receiptId) throws SQLException {
+        AppLogger.info("Looking for receipts matching " + receiptId);
         ReceiptLookupResult result = new ReceiptLookupResult();
-
-
         String sql = """
                 SELECT
                     c.FirstName,
@@ -65,7 +70,6 @@ public class PatientDBConnection {
 
             if (patient == null) {
                 patient = new Patient();
-
                 setProps(rs, patient);
             }
 
@@ -74,41 +78,16 @@ public class PatientDBConnection {
             item.setDescription(rs.getString("Description"));
             item.setQuantity(rs.getInt("Qty"));
             item.setPrice(rs.getDouble("SellPrice"));
-
             result.getItems().add(item);
-
             result.setPatient(patient);
-
         }
-
         return result;
     }
 
-    private void setProps(ResultSet rs, Patient patient) throws SQLException {
-        patient.setFirstName(
-                rs.getString("FirstName"));
 
-        patient.setSurname(
-                rs.getString("Surname"));
+    public List<Patient> findPatientsByName(String firstName, String surname) throws SQLException {
 
-        patient.setHomeAddress(
-                rs.getString("HomeAddress"));
-
-        patient.setHomeSuburb(
-                rs.getString("HomeSuburb"));
-
-        patient.setPhoneNumber(
-                rs.getString("PhoneNumber"));
-
-        patient.setMobileNumber(
-                rs.getString("MobileNumber"));
-    }
-
-    public List<Patient> findPatientsByName(
-            String firstName,
-            String surname)
-            throws SQLException {
-
+        AppLogger.info("Finding records under " + firstName + " " + surname);
         List<Patient> patients = new ArrayList<>();
 
         String sql = """
@@ -133,11 +112,8 @@ public class PatientDBConnection {
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
-
             Patient patient = new Patient();
-
             setProps(rs, patient);
-
             patients.add(patient);
         }
 

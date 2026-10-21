@@ -22,15 +22,18 @@ public class S3Uploader {
             ACCESS_KEY = ConfigManager.getAwsAccessKey();
             SECRET_KEY = ConfigManager.getAwsSecretKey();
         } catch (Exception e) {
-            e.printStackTrace();
+            AppLogger.error(e.getMessage(), e);
         }
         AwsBasicCredentials credentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
-        S3Client s3 = S3Client.builder().region(REGION)
-                .credentialsProvider(StaticCredentialsProvider.create(credentials)).build();
-        String extension = file.getName().substring(file.getName().lastIndexOf("."));
-        String fileName = UUID.randomUUID() + extension;
-        PutObjectRequest request = PutObjectRequest.builder().bucket(BUCKET).key(fileName).build();
-        s3.putObject(request, RequestBody.fromFile(file));
+        String fileName;
+        AppLogger.info("Uploading image to S3");
+        try (S3Client s3 = S3Client.builder().region(REGION)
+                .credentialsProvider(StaticCredentialsProvider.create(credentials)).build()) {
+            String extension = file.getName().substring(file.getName().lastIndexOf("."));
+            fileName = UUID.randomUUID() + extension;
+            PutObjectRequest request = PutObjectRequest.builder().bucket(BUCKET).key(fileName).build();
+            s3.putObject(request, RequestBody.fromFile(file));
+        }
         return String.format("https://%s.s3.%s.amazonaws.com/%s", BUCKET, REGION.id(), fileName);
     }
 }

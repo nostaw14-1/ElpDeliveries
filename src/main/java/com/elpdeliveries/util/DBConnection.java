@@ -21,6 +21,7 @@ public class DBConnection {
             password = ConfigManager.getPassword();
             url = "jdbc:mysql://" + server + ":" + port + "/" + database;
             conn = DriverManager.getConnection(url, username, password);
+            AppLogger.info("Connecting to " + url);
     }
 
     public Connection getConnection() {
@@ -201,7 +202,7 @@ public class DBConnection {
                 conn.close();
             } 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.warning(e.getMessage());
         }
     }
 

@@ -11,7 +11,7 @@ public class DeliveryGeocodingService {
         if (result == null) {
             throw new RuntimeException("Could not find address!");
         }
-        delivery.setLatitude(result.getLatitude());
-        delivery.setLongitude(result.getLongitude());
+        delivery.setLatitude(result.latitude());
+        delivery.setLongitude(result.longitude());
     }
 }

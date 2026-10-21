@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 
 import com.elpdeliveries.util.ConfigManager;
 
+import com.elpdeliveries.util.ErrorHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
@@ -66,7 +67,7 @@ public class SettingsController {
                                 depotLongTf.setText(ConfigManager.getDepotLong());
                         }
                 } catch (Exception e) {
-                        e.printStackTrace();
+                        ErrorHandler.showError(e.getMessage(), e);
                 }
         }
 
@@ -97,9 +98,7 @@ public class SettingsController {
 
         @FXML
         private void handleSubmit() {
-
                 if (handleTest()) {
-
                         try {
                                 ConfigManager.save(ipTf.getText(),
                                                 portTf.getText(),
@@ -119,7 +118,7 @@ public class SettingsController {
                                 Stage stage = (Stage) ipTf.getScene().getWindow();
                                 stage.close();
                         } catch (Exception e) {
-                                e.printStackTrace();
+                                ErrorHandler.showError(e.getMessage(), e);
                         }
                 }
         }

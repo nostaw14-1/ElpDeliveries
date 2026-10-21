@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ReceiptLookupResult {
     private Patient patient;
-    private List<ReceiptItem> items = new ArrayList<>();
+    private final List<ReceiptItem> items = new ArrayList<>();
 
     public Patient getPatient() {
         return patient;
@@ -19,7 +19,4 @@ public class ReceiptLookupResult {
         return items;
     }
 
-    public void setItems(List<ReceiptItem> items) {
-        this.items = items;
-    }
 }

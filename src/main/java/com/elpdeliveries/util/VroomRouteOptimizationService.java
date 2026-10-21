@@ -14,8 +14,11 @@ public class VroomRouteOptimizationService implements RouteOptimizationService {
     @Override
     public List<Integer> optimiseRoute(List<Delivery> deliveries, double depotLat, double depotLong) throws Exception{
         String requestJson = VroomJsonUtil.buildRequest(deliveries, depotLat, depotLong);
+        AppLogger.info("Posting " + deliveries.size() + " deliveries to VROOM for optimisation");
         String responseJson = postToVroom(requestJson);
-        return VroomJsonUtil.parse(responseJson);
+        List<Integer> response = VroomJsonUtil.parse(responseJson);
+        AppLogger.info("Received ordered list of " + response.size() + " from VROOM");
+        return response;
     }
 
     private String postToVroom(String requestJson) throws Exception {

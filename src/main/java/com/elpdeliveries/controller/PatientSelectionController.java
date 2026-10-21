@@ -4,10 +4,9 @@ import java.util.List;
 
 import com.elpdeliveries.model.Patient;
 
+import com.elpdeliveries.util.ErrorHandler;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -68,15 +67,7 @@ public class PatientSelectionController {
                 .getSelectedItem();
 
         if (selectedPatient == null) {
-
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-
-            alert.setHeaderText("No Patient Selected");
-            alert.setContentText("Please select a patient.");
-
-            alert.showAndWait();
-
-            return;
+            ErrorHandler.showError("Please select a patient!", new RuntimeException());
         }
 
         Stage stage = (Stage) patientTable

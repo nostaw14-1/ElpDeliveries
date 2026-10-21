@@ -57,10 +57,7 @@ public class ConfigManager {
         props.setProperty("depotLong", depotLong);
 
         try (FileOutputStream fos = new FileOutputStream(FILE_NAME)) {
-
-            props.store(
-                    fos,
-                    "ELP DELIVERIES SETTINGS");
+            props.store(fos, "ELP DELIVERIES SETTINGS");
         }
     }
 
@@ -96,36 +93,20 @@ public class ConfigManager {
         return load().getProperty("bucket");
     }
 
-    public static String getSqlServer()
-            throws Exception {
-
-        return load().getProperty(
-                "sqlServer",
-                "");
+    public static String getSqlServer() throws Exception {
+        return load().getProperty("sqlServer", "");
     }
 
-    public static String getSqlDatabase()
-            throws Exception {
-
-        return load().getProperty(
-                "sqlDatabase",
-                "");
+    public static String getSqlDatabase() throws Exception {
+        return load().getProperty("sqlDatabase", "");
     }
 
-    public static String getSqlUsername()
-            throws Exception {
-
-        return load().getProperty(
-                "sqlUsername",
-                "");
+    public static String getSqlUsername() throws Exception {
+        return load().getProperty("sqlUsername", "");
     }
 
-    public static String getSqlPassword()
-            throws Exception {
-
-        return load().getProperty(
-                "sqlPassword",
-                "");
+    public static String getSqlPassword() throws Exception {
+        return load().getProperty("sqlPassword", "");
     }
 
     public static String getVroomIp() throws Exception {

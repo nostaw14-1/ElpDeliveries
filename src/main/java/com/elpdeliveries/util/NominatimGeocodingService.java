@@ -40,7 +40,7 @@ public class NominatimGeocodingService implements GeocodingService {
             return new GeocodeResult(latitude, longitude);
 
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            ErrorHandler.showError(e.getMessage(), e);
             return null;
         }
 

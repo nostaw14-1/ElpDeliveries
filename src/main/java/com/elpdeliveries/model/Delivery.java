@@ -20,7 +20,7 @@ public class Delivery {
     private boolean handedToCustomer;
     private Double latitude;
     private Double longitude;
-    private Integer routeOrder;
+    private final Integer routeOrder;
 
     public Delivery(int id, Date createdDate, Date dlvDate,
                     String fname, String lname, String phnum, String homePhone,
@@ -209,10 +209,6 @@ public class Delivery {
 
     public Integer getRouteOrder() {
         return routeOrder;
-    }
-
-    public void setRouteOrder(Integer routeOrder) {
-        this.routeOrder = routeOrder;
     }
 
     public boolean hasCoordinates() {
