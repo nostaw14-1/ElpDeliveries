@@ -74,10 +74,10 @@
                   <Label text="Last Name:" GridPane.rowIndex="3" />
                   <Label text="Receipt Number:" GridPane.rowIndex="4" />
                   <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSearch" prefHeight="26.0" text="Search" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" GridPane.vgrow="ALWAYS" />
-                  <TextField fx:id="fnameField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                  <TextField fx:id="lnameField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                  <TextField fx:id="receiptField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
-                  <DatePicker fx:id="searchDatePicker" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                  <TextField fx:id="fnameField" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                  <TextField fx:id="lnameField" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                  <TextField fx:id="receiptField" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                  <DatePicker fx:id="searchDatePicker" maxWidth="1.7976931348623157E308" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                   <Label text="Search" GridPane.columnSpan="2" GridPane.halignment="CENTER">
                      <font>
                         <Font name="System Bold" size="16.0" />

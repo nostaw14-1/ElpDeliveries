@@ -15,7 +15,7 @@ public final class ConfigManager {
 
     static {
         try {
-            AppLogger.info("Loading config at " + getConfigDirectory() + getConfigFile());
+            AppLogger.info("Loading config at " + getConfigFile());
             load();
         } catch (Exception e) {
             AppLogger.error("Failed to load config", e);
