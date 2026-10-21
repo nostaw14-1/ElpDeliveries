@@ -150,6 +150,8 @@ public class AddEditController {
                         null);
                 geocoder.geocodeDelivery(newDelivery);
                 dao.addDelivery(newDelivery);
+                AppLogger.info("Added new delivery");
+
             } else {
                 delivery.setFname(fnameTf.getText());
                 delivery.setLname(lnameTf.getText());
@@ -165,6 +167,7 @@ public class AddEditController {
                 delivery.setDlvDate(deliveryDate);
                 delivery.setPhoto(photoPath);
                 geocoder.geocodeDelivery(delivery);
+                AppLogger.info("Updated delivery: " + delivery.getId());
                 dao.updateDelivery(delivery);
             }
             closeWindow();
@@ -197,6 +200,7 @@ public class AddEditController {
         }
         try {
             photoPath = S3Uploader.upload(file);
+            AppLogger.info("Uploaded file: " + file);
             showImage(photoPath);
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
@@ -211,6 +215,7 @@ public class AddEditController {
             alert.setContentText("Are you sure you want to delete?");
             if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 if (delivery != null) {
+                    AppLogger.info("Deleting delivery: " + delivery.getId());
                     dao.deleteDelivery(delivery.getId());
                     Stage stage = (Stage) completedCb.getScene().getWindow();
                     stage.close();

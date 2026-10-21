@@ -16,8 +16,7 @@ public class AppLogger {
         try {
             Path logDir = ConfigManager.getConfigDirectory().resolve("logs");
             Files.createDirectories(logDir);
-            Path logFile = logDir.resolve("elp.log");
-            FileHandler fileHandler = new FileHandler(logFile.toString(), true);
+            FileHandler fileHandler = new FileHandler(logDir.resolve("elp-%g.log").toString(),5_000_000, 5, true);
             fileHandler.setFormatter(new SimpleFormatter());
             LOGGER.addHandler(fileHandler);
             LOGGER.setUseParentHandlers(true);

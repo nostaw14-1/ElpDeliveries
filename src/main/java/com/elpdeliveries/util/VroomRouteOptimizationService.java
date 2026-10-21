@@ -12,7 +12,10 @@ public class VroomRouteOptimizationService implements RouteOptimizationService {
     private final HttpClient client = HttpClient.newHttpClient();
     
     @Override
-    public List<Integer> optimiseRoute(List<Delivery> deliveries, double depotLat, double depotLong) throws Exception{
+    public List<Integer> optimiseRoute(List<Delivery> deliveries, double depotLat, double depotLong) throws Exception {
+        if (deliveries.isEmpty()) {
+            throw new RuntimeException("No deliveries to order!");
+        }
         String requestJson = VroomJsonUtil.buildRequest(deliveries, depotLat, depotLong);
         AppLogger.info("Posting " + deliveries.size() + " deliveries to VROOM for optimisation");
         String responseJson = postToVroom(requestJson);
