@@ -8,6 +8,11 @@ import javafx.stage.Stage;
 
 public class ElpDeliveries extends Application {
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/elpdeliveries/Main.fxml"));
         Parent root = loader.load();

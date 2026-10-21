@@ -30,7 +30,10 @@ public class ConfigManager {
             String sqlPassword,
             String awsAccessKey,
             String awsSecretKey,
-            String bucket) throws Exception {
+            String bucket,
+            String vroomIp,
+            String depotLat,
+            String depotLong) throws Exception {
 
         Properties props = new Properties();
 
@@ -48,6 +51,10 @@ public class ConfigManager {
         props.setProperty("awsAccessKey", awsAccessKey);
         props.setProperty("awsSecretKey", awsSecretKey);
         props.setProperty("bucket", bucket);
+
+        props.setProperty("vroomIp", vroomIp);
+        props.setProperty("depotLat", depotLat);
+        props.setProperty("depotLong", depotLong);
 
         try (FileOutputStream fos = new FileOutputStream(FILE_NAME)) {
 
@@ -119,6 +126,18 @@ public class ConfigManager {
         return load().getProperty(
                 "sqlPassword",
                 "");
+    }
+
+    public static String getVroomIp() throws Exception {
+        return load().getProperty("vroomIp");
+    }
+
+    public static String getDepotLat() throws Exception {
+        return load().getProperty("depotLat");
+    }
+
+    public static String getDepotLong() throws Exception {
+        return load().getProperty("depotLong");
     }
 
 }

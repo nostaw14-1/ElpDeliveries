@@ -41,6 +41,9 @@ public class SettingsController {
         @FXML private TextField sqlDbTf;
         @FXML private TextField sqlUserTf;
         @FXML private PasswordField sqlPwdPf;
+        @FXML private TextField vroomTf;
+        @FXML private TextField depotLatTf;
+        @FXML private TextField depotLongTf;
 
         @FXML
         public void initialize() {
@@ -58,8 +61,12 @@ public class SettingsController {
                                 bucketTf.setText(ConfigManager.getBucket());
                                 akTf.setText(ConfigManager.getAwsAccessKey());
                                 skTf.setText(ConfigManager.getAwsSecretKey());
+                                vroomTf.setText(ConfigManager.getVroomIp());
+                                depotLatTf.setText(ConfigManager.getDepotLat());
+                                depotLongTf.setText(ConfigManager.getDepotLong());
                         }
                 } catch (Exception e) {
+                        e.printStackTrace();
                 }
         }
 
@@ -105,14 +112,14 @@ public class SettingsController {
                                                 sqlPwdPf.getText(),
                                                 akTf.getText(),
                                                 skTf.getText(),
-                                                bucketTf.getText());
+                                                bucketTf.getText(),
+                                                vroomTf.getText(),
+                                                depotLatTf.getText(),
+                                                depotLongTf.getText());
                                 Stage stage = (Stage) ipTf.getScene().getWindow();
                                 stage.close();
                         } catch (Exception e) {
-                                Alert alert = new Alert(Alert.AlertType.ERROR);
-                                alert.setHeaderText("Save Failed");
-                                alert.setContentText(e.getMessage());
-                                alert.showAndWait();
+                                e.printStackTrace();
                         }
                 }
         }

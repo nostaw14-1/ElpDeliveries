@@ -132,8 +132,9 @@ public class DBConnection {
         String sql = "UPDATE deliveries SET fname=?,lname=?,phnum=?,receiptNum=?,addr=?,dlvDate=?,storeNotes=?,dlvNotes=?,handedToCustomer=?,completed=?,completedBy=?,completedDate=?,photo=?,latitude=?,longitude=?,routeOrder=?,homePhone=? WHERE id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         setProps(d, ps);
-        ps.executeUpdate();
         ps.setInt(18, d.getId());
+        ps.executeUpdate();
+
     }
 
     private void setProps(Delivery d, PreparedStatement ps) throws SQLException {
@@ -204,7 +205,15 @@ public class DBConnection {
         }
     }
 
+    public void clearRouteOrders() throws SQLException {
+        String sql = "UPDATE deliveries SET routeOrder=?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setNull(1, Types.INTEGER);
+        ps.executeUpdate();
+    }
+
     public void updateRouteOrders(List<Integer> orderedIds) throws SQLException {
+        clearRouteOrders();
         String sql = "UPDATE deliveries SET routeOrder=? WHERE id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         for (int i = 0; i < orderedIds.size(); i++) {

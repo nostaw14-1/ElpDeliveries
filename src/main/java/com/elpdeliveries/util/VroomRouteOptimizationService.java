@@ -9,7 +9,6 @@ import java.net.http.HttpResponse;
 import java.util.List;
 
 public class VroomRouteOptimizationService implements RouteOptimizationService {
-    private static final String VROOM_URL = "http://192.168.0.2:3000";
     private final HttpClient client = HttpClient.newHttpClient();
     
     @Override
@@ -20,6 +19,7 @@ public class VroomRouteOptimizationService implements RouteOptimizationService {
     }
 
     private String postToVroom(String requestJson) throws Exception {
+        String VROOM_URL = "http://" + ConfigManager.getVroomIp() + ":3000";
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(VROOM_URL))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestJson)).build();

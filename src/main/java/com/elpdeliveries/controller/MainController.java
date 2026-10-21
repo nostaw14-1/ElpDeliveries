@@ -185,8 +185,8 @@ public class MainController {
         try {
             List<Delivery> deliveries = performSearch();
             List<Integer> orderedIds = VROS.optimiseRoute(deliveries,
-                    -33.7675529,
-                    151.1875328);
+                    Double.parseDouble(ConfigManager.getDepotLat()),
+                    Double.parseDouble(ConfigManager.getDepotLong()));
 
             dao.updateRouteOrders(orderedIds);
             performSearch();
