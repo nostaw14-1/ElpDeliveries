@@ -72,7 +72,7 @@ public class DBConnection {
             params.add(false);
         }
 
-        sql += " ORDER BY dlvDate ASC";
+        sql += " ORDER BY routeOrder ASC";
 
         PreparedStatement ps = conn.prepareStatement(sql);
 

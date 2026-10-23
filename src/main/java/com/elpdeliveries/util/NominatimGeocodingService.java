@@ -17,6 +17,11 @@ public class NominatimGeocodingService implements GeocodingService {
     private final ObjectMapper mapper = new ObjectMapper();
 
     public GeocodeResult geocode(String address) throws IOException, InterruptedException {
+        address = address.replaceFirst("(?i)Lindfield Gardens", "2 Ulmarra Pl");
+        address = address.replaceFirst(
+                "(?i)^unit\\s+([0-9]{1,3}[A-Z]?)\\s*,?\\s*(\\d+)",
+                "$1/$2");
+        AppLogger.info("Geocoding: " + address);
         String encoded = URLEncoder.encode(address, StandardCharsets.UTF_8);
         String url =
                 "https://nominatim.openstreetmap.org/search" +
@@ -36,7 +41,7 @@ public class NominatimGeocodingService implements GeocodingService {
             JsonNode result = root.get(0);
             Double latitude = result.get("lat").asDouble();
             Double longitude = result.get("lon").asDouble();
-
+            AppLogger.info("Returned: lat=" + latitude + "\nlong=" + longitude);
             return new GeocodeResult(latitude, longitude);
 
         } catch (Exception e) {
