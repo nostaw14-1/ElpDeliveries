@@ -151,7 +151,8 @@ public class AddEditController {
                         handedCb.isSelected(),
                         null,
                         null,
-                        null);
+                        null,
+                        true);
                 geocoder.geocodeDelivery(newDelivery);
                 dao.addDelivery(newDelivery);
                 AppLogger.info("Added new delivery");

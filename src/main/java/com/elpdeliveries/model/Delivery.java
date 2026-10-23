@@ -1,4 +1,7 @@
 package com.elpdeliveries.model;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.sql.Date;
 
 public class Delivery {
@@ -21,13 +24,15 @@ public class Delivery {
     private Double latitude;
     private Double longitude;
     private final Integer routeOrder;
+    private final BooleanProperty includedInRoute = new SimpleBooleanProperty(true);
 
     public Delivery(int id, Date createdDate, Date dlvDate,
                     String fname, String lname, String phnum, String homePhone,
                     String addr, String storeNotes, String dlvNotes,
                     int receiptId, String photo,
                     boolean completed, String completedBy,
-                    Date completedDate, boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder) {
+                    Date completedDate, boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder
+                    , boolean includedInRoute) {
         this.id = id;
         this.createdDate = createdDate;
         this.dlvDate = dlvDate;
@@ -47,6 +52,7 @@ public class Delivery {
         this.latitude = latitude;
         this.longitude = longitude;
         this.routeOrder = routeOrder;
+        this.includedInRoute.set(includedInRoute);
     }
 
     public Delivery(Date createdDate, Date dlvDate,
@@ -54,7 +60,8 @@ public class Delivery {
                     String addr, String storeNotes, String dlvNotes,
                     int receiptId, String photo,
                     boolean completed, String completedBy,
-                    Date completedDate, boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder) {
+                    Date completedDate, boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder,
+                    boolean includedInRoute) {
         this.createdDate = createdDate;
         this.dlvDate = dlvDate;
         this.fname = fname;
@@ -73,6 +80,7 @@ public class Delivery {
         this.latitude = latitude;
         this.longitude = longitude;
         this.routeOrder = routeOrder;
+        this.includedInRoute.set(includedInRoute);
     }
 
     public int getId() {
@@ -213,6 +221,18 @@ public class Delivery {
 
     public boolean hasCoordinates() {
         return latitude != null && longitude != null;
+    }
+
+    public BooleanProperty includedInRouteProperty() {
+        return includedInRoute;
+    }
+
+    public boolean isIncludedInRoute() {
+        return includedInRoute.get();
+    }
+
+    public void setIncludedInRoute(boolean value) {
+        includedInRoute.set(value);
     }
 
 }

@@ -12,7 +12,6 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -22,123 +21,120 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.elpdeliveries.controller.MainController">
-   <center>
-      <BorderPane prefHeight="720.0" prefWidth="1280.0">
-         <top>
-            <TabPane fx:id="tabPane" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-              <tabs>
-                <Tab text="All Deliveries" />
-                <Tab text="Deliveries for Today" />
-                  <Tab text="Future Deliveries" />
-              </tabs>
-            </TabPane>
-         </top>
-         <center>
-            <TableView fx:id="deliveryTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-              <columns>
-                <TableColumn fx:id="idCol" resizable="false" text="#" />
-                  <TableColumn fx:id="rteCol" resizable="false" text="Rte #" />
-                <TableColumn fx:id="fnameCol" resizable="false" text="First Name" />
-                  <TableColumn fx:id="lnameCol" resizable="false" text="Last Name" />
-                  <TableColumn fx:id="addrCol" resizable="false" text="Addresss" />
-                  <TableColumn fx:id="dfdCol" resizable="false" text="Date for Delivery" />
-                  <TableColumn fx:id="addEditCol" resizable="false" text="Edit" />
-                  <TableColumn fx:id="completedCol" resizable="false" text="Completed" />
-              </columns>
-            </TableView>
-         </center>
-      </BorderPane>
-   </center>
-   <right>
-      <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+<VBox minHeight="720.0" minWidth="1280.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.elpdeliveries.controller.MainController">
+   <children>
+      <HBox VBox.vgrow="ALWAYS">
          <children>
-            <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" />
-                <ColumnConstraints hgrow="ALWAYS" />
-              </columnConstraints>
-              <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-              </rowConstraints>
+            <VBox HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="Date:" GridPane.rowIndex="1" />
-                  <Label text="First Name:" GridPane.rowIndex="2" />
-                  <Label text="Last Name:" GridPane.rowIndex="3" />
-                  <Label text="Receipt Number:" GridPane.rowIndex="4" />
-                  <Button maxWidth="132.0" mnemonicParsing="false" onAction="#handleSearch" text="Search" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" GridPane.vgrow="ALWAYS" />
-                  <TextField fx:id="fnameField" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                  <TextField fx:id="lnameField" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                  <TextField fx:id="receiptField" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
-                  <DatePicker fx:id="searchDatePicker" maxWidth="1.7976931348623157E308" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                  <Label text="Search" GridPane.columnSpan="2" GridPane.halignment="CENTER">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label text="Show Only Uncompleted:" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                  <CheckBox fx:id="uncompletedCB" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
-                  <Label fx:id="countLabel" text="Showing X Deliveries" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-                  <Button maxWidth="132.0" mnemonicParsing="false" onAction="#handleClear" text="Clear" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" />
+                  <TabPane fx:id="tabPane" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab text="Deliveries for Today" />
+                        <Tab text="Future Deliveries" />
+                      <Tab text="All Deliveries" />
+                    </tabs>
+                  </TabPane>
+                  <TableView fx:id="deliveryTable" editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="idCol" editable="false" resizable="false" sortable="false" text="#" />
+                        <TableColumn fx:id="rteCol" editable="false" resizable="false" sortable="false" text="Rte #" />
+                      <TableColumn fx:id="fnameCol" editable="false" resizable="false" sortable="false" text="First Name" />
+                        <TableColumn fx:id="lnameCol" editable="false" resizable="false" sortable="false" text="Last Name" />
+                        <TableColumn fx:id="addrCol" editable="false" resizable="false" sortable="false" text="Addresss" />
+                        <TableColumn fx:id="dfdCol" editable="false" resizable="false" sortable="false" text="Date for Delivery" />
+                        <TableColumn fx:id="completedCol" editable="false" resizable="false" sortable="false" text="Completed" />
+                        <TableColumn fx:id="deliverCol" resizable="false" sortable="false" text="Deliver?" />
+                    </columns>
+                  </TableView>
                </children>
-               <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </VBox.margin>
-            </GridPane>
-            <Separator prefWidth="200.0" />
-            <GridPane alignment="CENTER" hgap="10.0" vgap="10.0" VBox.vgrow="ALWAYS">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" />
-                  <ColumnConstraints hgrow="ALWAYS" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="6.399987792968744" vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="20.800012207031273" minHeight="3.2000366210937727" prefHeight="12.000024414062523" vgrow="SOMETIMES" />
-               </rowConstraints>
+            </VBox>
+            <VBox alignment="TOP_CENTER">
                <children>
-                  <Label text="Receipt Num:" GridPane.rowIndex="1" />
-                  <Label text="Mobile Phone:" GridPane.rowIndex="2" />
-                  <Label text="Home Phone:" GridPane.rowIndex="3" />
-                  <TextField fx:id="phoneTf" editable="false" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                  <TextField fx:id="homePhoneTf" editable="false" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                  <Label text="Delivery Preview" GridPane.columnSpan="2" GridPane.halignment="CENTER">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label text="Notes:" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-                  <TextField fx:id="receiptTf" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextArea fx:id="dlvNotesTa" editable="false" maxWidth="1.7976931348623157E308" prefHeight="60.0" prefRowCount="2" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-                  <Separator GridPane.columnSpan="2" GridPane.rowIndex="4" />
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleEdit" text="Edit" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" />
+                  <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                      <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Date:" GridPane.rowIndex="1" />
+                        <Label text="First Name:" GridPane.rowIndex="2" />
+                        <Label text="Last Name:" GridPane.rowIndex="3" />
+                        <Label text="Receipt Number:" GridPane.rowIndex="4" />
+                        <Button maxWidth="132.0" mnemonicParsing="false" onAction="#handleSearch" text="Search" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS" />
+                        <TextField fx:id="fnameField" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                        <TextField fx:id="lnameField" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                        <TextField fx:id="receiptField" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                        <DatePicker fx:id="searchDatePicker" maxWidth="1.7976931348623157E308" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                        <Label text="Search" GridPane.columnSpan="2" GridPane.halignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label text="Show Only Uncompleted:" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+                        <CheckBox fx:id="uncompletedCB" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#handleSearch" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6" />
+                        <Label fx:id="countLabel" text="Showing X Deliveries" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+                        <Button maxWidth="132.0" mnemonicParsing="false" onAction="#handleClear" text="Clear" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <Separator prefWidth="200.0" />
+                  <GridPane alignment="CENTER" hgap="10.0" vgap="10.0" VBox.vgrow="ALWAYS">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="6.399987792968744" vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="20.800012207031273" minHeight="3.2000366210937727" prefHeight="12.000024414062523" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="Receipt Num:" GridPane.rowIndex="1" />
+                        <Label text="Mobile Phone:" GridPane.rowIndex="2" />
+                        <Label text="Home Phone:" GridPane.rowIndex="3" />
+                        <TextField fx:id="phoneTf" editable="false" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                        <TextField fx:id="homePhoneTf" editable="false" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                        <Label text="Delivery Preview" GridPane.columnSpan="2" GridPane.halignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label text="Notes:" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                        <TextField fx:id="receiptTf" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextArea fx:id="dlvNotesTa" editable="false" maxWidth="1.7976931348623157E308" prefHeight="60.0" prefRowCount="2" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                        <Separator GridPane.columnSpan="2" GridPane.rowIndex="4" />
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleEdit" text="Edit" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="20.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </GridPane>
                </children>
-               <VBox.margin>
-                  <Insets bottom="20.0" left="10.0" right="10.0" top="10.0" />
-               </VBox.margin>
-            </GridPane>
+            </VBox>
          </children>
-      </VBox>
-   </right>
-   <bottom>
+      </HBox>
       <HBox accessibleRole="TOOL_BAR" alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0" spacing="5.0" style="-fx-border-color: #d4d4d4; -fx-border-width: 1 0 0 0;">
          <children>
             <Button mnemonicParsing="false" onAction="#handleAdd" text="Add" />
-            <Button mnemonicParsing="false" onAction="#handleSearch" text="Refresh" />
-            <Button mnemonicParsing="false" onAction="#handleSettings" text="Settings" />
             <Button mnemonicParsing="false" onAction="#handleGenerateRoute" text="Generate Route" />
+            <Button mnemonicParsing="false" onAction="#handleSettings" text="Settings" />
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <Text fx:id="todayLabel" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Deliveries for Today: 0" />
             <Text fx:id="uncompletedLabel" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Uncompleted Deliveries: 0" />
@@ -147,5 +143,5 @@
             <Insets left="7.0" right="7.0" />
          </padding>
       </HBox>
-   </bottom>
-</BorderPane>
+   </children>
+</VBox>

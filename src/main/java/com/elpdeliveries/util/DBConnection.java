@@ -72,7 +72,7 @@ public class DBConnection {
             params.add(false);
         }
 
-        sql += " ORDER BY routeOrder ASC";
+        sql += " ORDER BY routeOrder IS NULL, routeOrder ASC";
 
         PreparedStatement ps = conn.prepareStatement(sql);
 
@@ -113,7 +113,8 @@ public class DBConnection {
                     rs.getBoolean("handedToCustomer"),
                     latitude,
                     longitude,
-                    routeOrder);
+                    routeOrder,
+                    rs.getBoolean("includeInRoute"));
 
             deliveries.add(delivery);
         }
@@ -123,17 +124,17 @@ public class DBConnection {
     }
 
     public void addDelivery(Delivery d) throws SQLException {
-        String sql = "INSERT INTO deliveries(fname,lname,phnum,receiptNum,addr,dlvDate,storeNotes,dlvNotes,handedToCustomer,completed,completedBy,completedDate,photo,latitude,longitude,routeOrder,homePhone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO deliveries(fname,lname,phnum,receiptNum,addr,dlvDate,storeNotes,dlvNotes,handedToCustomer,completed,completedBy,completedDate,photo,latitude,longitude,routeOrder,homePhone,includeInRoute) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
         setProps(d, ps);
         ps.executeUpdate();
     }
 
     public void updateDelivery(Delivery d) throws SQLException {
-        String sql = "UPDATE deliveries SET fname=?,lname=?,phnum=?,receiptNum=?,addr=?,dlvDate=?,storeNotes=?,dlvNotes=?,handedToCustomer=?,completed=?,completedBy=?,completedDate=?,photo=?,latitude=?,longitude=?,routeOrder=?,homePhone=? WHERE id=?";
+        String sql = "UPDATE deliveries SET fname=?,lname=?,phnum=?,receiptNum=?,addr=?,dlvDate=?,storeNotes=?,dlvNotes=?,handedToCustomer=?,completed=?,completedBy=?,completedDate=?,photo=?,latitude=?,longitude=?,routeOrder=?,homePhone=?,includeInRoute=? WHERE id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         setProps(d, ps);
-        ps.setInt(18, d.getId());
+        ps.setInt(19, d.getId());
         ps.executeUpdate();
 
     }
@@ -168,6 +169,7 @@ public class DBConnection {
             ps.setInt(16, d.getRouteOrder());
         }
         ps.setString(17, d.getHomePhone());
+        ps.setBoolean(18, d.isIncludedInRoute());
 
 
     }
@@ -225,4 +227,12 @@ public class DBConnection {
         ps.executeBatch();
     }
 
+    public void updateIncludeInRoute(int id, boolean includeInRoute) throws SQLException {
+        String sql = "UPDATE deliveries SET includeInRoute=? WHERE id=?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, includeInRoute);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        }
+    }
 }

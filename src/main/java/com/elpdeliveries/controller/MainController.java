@@ -39,7 +39,7 @@ public class MainController {
     @FXML
     private TableColumn<Delivery, Date> dfdCol;
     @FXML
-    private TableColumn<Delivery, Void> addEditCol;
+    private TableColumn<Delivery, Boolean> deliverCol;
     @FXML
     private TableColumn<Delivery, Boolean> completedCol;
     @FXML
@@ -64,7 +64,7 @@ public class MainController {
     private TextField homePhoneTf;
     @FXML
     private TextArea dlvNotesTa;
-    private String currentView = "All Deliveries";
+    private String currentView = "Deliveries for Today";
     private DBConnection dao;
     private Delivery selectedDelivery;
 
@@ -90,6 +90,7 @@ public class MainController {
             ErrorHandler.showError("Please configure a database!", new RuntimeException());
             openSettings();
         }
+
         deliveryTable.setPlaceholder(new Text("No deliveries to show"));
         loadDeliveries(currentView);
 
@@ -98,36 +99,13 @@ public class MainController {
             performSearch();
         });
 
-        addEditCol.setCellFactory(_ -> new TableCell<>() {
-            private final Button btn = new Button("Edit");
-
-            {
-                btn.setOnAction(_ -> {
-                    Delivery selectDelivery = getTableView().getItems().get(getIndex());
-                    openAddEdit(selectDelivery);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    btn.prefWidthProperty().bind(getTableColumn().widthProperty().subtract(10));
-                    btn.prefHeightProperty().bind(getTableRow().heightProperty().subtract(10));
-                    setGraphic(btn);
-                }
-            }
-        });
-
         idCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.05));
         rteCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.05));
         fnameCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.12));
         lnameCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.12));
         addrCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.30));
         dfdCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.16));
-        addEditCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.10));
+        deliverCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.10));
         completedCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.095));
 
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -136,10 +114,12 @@ public class MainController {
         lnameCol.setCellValueFactory(new PropertyValueFactory<>("lname"));
         addrCol.setCellValueFactory(new PropertyValueFactory<>("addr"));
         dfdCol.setCellValueFactory(new PropertyValueFactory<>("dlvDate"));
-        completedCol.setCellValueFactory(
-                cellData -> new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isCompleted()));
+        completedCol.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isCompleted()));
 
         completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
+        deliverCol.setCellValueFactory(cellData -> cellData.getValue().includedInRouteProperty());
+        deliverCol.setCellFactory(_ -> new CheckBoxTableCell<>());
 
         deliveryTable.getSelectionModel().selectedItemProperty()
                 .addListener((_, _, newSelection) -> showPreview(newSelection));
@@ -162,6 +142,15 @@ public class MainController {
     }
 
     @FXML
+    private void handleClear() {
+        searchDatePicker.setValue(null);
+        fnameField.clear();
+        lnameField.clear();
+        receiptField.clear();
+        performSearch();
+    }
+
+    @FXML
     private void handleEdit() {
         if (selectedDelivery == null) {
             return;
@@ -172,7 +161,7 @@ public class MainController {
     @FXML
     private void handleGenerateRoute() {
         try {
-            List<Delivery> deliveries = performSearch();
+            List<Delivery> deliveries = deliveryTable.getItems().stream().filter(Delivery::isIncludedInRoute).toList();
             List<Integer> orderedIds = VROS.optimiseRoute(deliveries,
                     Double.parseDouble(ConfigManager.getDepotLat()),
                     Double.parseDouble(ConfigManager.getDepotLong()));
@@ -189,6 +178,7 @@ public class MainController {
         Integer receiptNum = null;
         if (searchDatePicker.getValue() != null) {
             date = Date.valueOf(searchDatePicker.getValue());
+            tabPane.getSelectionModel().selectLast();
         }
         if (!receiptField.getText().trim().isEmpty()) {
             receiptNum = Integer.parseInt(receiptField.getText());
@@ -202,6 +192,16 @@ public class MainController {
                                           Boolean uncompleted) {
         try {
             ArrayList<Delivery> deliveries = dao.getDeliveries(view, date, fname, lname, receiptNum, uncompleted);
+            for (Delivery delivery : deliveries) {
+                delivery.includedInRouteProperty()
+                        .addListener((obs, oldVal, newVal) -> {
+                            try {
+                                dao.updateIncludeInRoute(delivery.getId(), newVal);
+                            } catch (SQLException e) {
+                                ErrorHandler.showError("Unable to save route preference", e);
+                            }
+                        });
+            }
             deliveryTable.setItems(FXCollections
                     .observableArrayList(deliveries));
             todayLabel.setText("Deliveries for Today: " + dao.getTodayCount());
@@ -215,16 +215,7 @@ public class MainController {
     }
 
     private void loadDeliveries(String view) {
-        try {
-            ArrayList<Delivery> deliveries = dao.getDeliveries(view, null, null, null, null, null);
-            deliveryTable
-                    .setItems(FXCollections.observableArrayList(deliveries));
-            todayLabel.setText("Deliveries for Today: " + dao.getTodayCount());
-            uncompletedLabel.setText("Uncompleted Deliveries: " + dao.getUncompletedCount());
-            countLabel.setText("Showing " + deliveries.size() + " Deliveries");
-        } catch (SQLException e) {
-            ErrorHandler.showError(e.getMessage(), e);
-        }
+        loadDeliveries(view, null, null, null, null, null);
     }
 
     private void openAddEdit(Delivery d) {
@@ -289,4 +280,6 @@ public class MainController {
         dlvNotesTa.setText(d.getDlvNotes() == null ? "" : d.getDlvNotes());
 
     }
+
+
 }
