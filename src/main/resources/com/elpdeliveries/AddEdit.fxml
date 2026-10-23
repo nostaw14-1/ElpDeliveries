@@ -40,7 +40,7 @@
 
                   <Label text="Receipt Number" GridPane.rowIndex="4" />
 
-                  <TextField fx:id="receiptTf" onAction="#handleFillFromId" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+                  <TextField fx:id="receiptTf" onAction="#handleReceiptScanned" GridPane.columnSpan="2" GridPane.rowIndex="5" />
                   <Label text="Created At" GridPane.rowIndex="6" />
                   <Label text="Completed By" GridPane.rowIndex="8" />
                   <Label text="Items" GridPane.rowIndex="10" />

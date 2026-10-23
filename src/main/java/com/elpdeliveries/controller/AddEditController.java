@@ -2,7 +2,9 @@ package com.elpdeliveries.controller;
 
 import com.elpdeliveries.model.*;
 import com.elpdeliveries.util.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +19,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class AddEditController {
@@ -62,6 +65,8 @@ public class AddEditController {
     private String photoPath;
     private ImageView imageView;
     private Delivery delivery;
+    private Runnable onSave;
+    private Runnable onSaveAndContinue;
 
     @FXML
     private void initialize() {
@@ -69,7 +74,6 @@ public class AddEditController {
             dao = new DBConnection();
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
-
         }
         qtyCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("quantity"));
         itemCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("description"));
@@ -81,9 +85,9 @@ public class AddEditController {
         this.delivery = delivery;
         if (delivery == null) {
             deleteButton.setVisible(false);
+            dfdDatePicker.setValue(LocalDate.now());
             return;
         }
-
         fnameTf.setText(delivery.getFname());
         lnameTf.setText(delivery.getLname());
         phoneTf.setText(delivery.getPhnum());
@@ -117,7 +121,7 @@ public class AddEditController {
     }
 
     @FXML
-    private void handleSubmit() {
+    private boolean saveDelivery() {
         DeliveryGeocodingService geocoder = new DeliveryGeocodingService();
         try {
             Date deliveryDate = null;
@@ -170,15 +174,26 @@ public class AddEditController {
                 AppLogger.info("Updated delivery: " + delivery.getId());
                 dao.updateDelivery(delivery);
             }
-            closeWindow();
-
+        return true;
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
+            return false;
         }
     }
 
+    @FXML
+    private void handleSubmit() {
+        if (!saveDelivery()) {
+            return;
+        }
+        if (onSave != null) {
+            onSave.run();
+        }
+        closeWindow();
+    }
 
     private void closeWindow() {
+
         Stage stage = (Stage) fnameTf.getScene().getWindow();
         stage.close();
     }
@@ -260,17 +275,16 @@ public class AddEditController {
     }
 
     @FXML
-    private void handleFillFromId() {
-        try {
+    private boolean handleFillFromId() throws Exception {
             PatientDBConnection patientDao = new PatientDBConnection();
             if (receiptTf.getText().isBlank()) {
-                return;
+                return false;
             }
 
             ReceiptLookupResult foundPatients = patientDao.findPatientsById(Integer.parseInt(receiptTf.getText().trim()));
             if (foundPatients.getItems().isEmpty()) {
                 ErrorHandler.showError("No matches found", new Exception("No matches found"));
-                return;
+                return false;
             }
             Patient patient = foundPatients.getPatient();
             fnameTf.setText(patient.getFirstName());
@@ -279,10 +293,7 @@ public class AddEditController {
             homePhoneTf.setText(patient.getPhoneNumber());
             addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
             itemsTable.setItems(FXCollections.observableArrayList(foundPatients.getItems()));
-
-        } catch (Exception e) {
-            ErrorHandler.showError(e.getMessage(), e);
-        }
+            return true;
     }
 
     @FXML
@@ -310,12 +321,13 @@ public class AddEditController {
             }
             if (foundPatients.size() > 1) {
                 Patient patient = showPatientSelection(foundPatients);
-                assert patient != null;
-                fnameTf.setText(patient.getFirstName());
-                lnameTf.setText(patient.getSurname());
-                phoneTf.setText(patient.getMobileNumber());
-                homePhoneTf.setText(patient.getPhoneNumber());
-                addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
+                if (patient != null) {
+                    fnameTf.setText(patient.getFirstName());
+                    lnameTf.setText(patient.getSurname());
+                    phoneTf.setText(patient.getMobileNumber());
+                    homePhoneTf.setText(patient.getPhoneNumber());
+                    addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
+                }
             }
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
@@ -342,4 +354,32 @@ public class AddEditController {
         }
     }
 
+    @FXML
+    public void handleReceiptScanned() {
+        try {
+            if (!handleFillFromId()) {
+                return;
+            }
+            if (!saveDelivery()) {
+                return;
+            }
+            closeWindow();
+            Platform.runLater(() -> {
+                if (onSaveAndContinue != null) {
+                    onSaveAndContinue.run();
+                }
+            });
+
+        } catch (Exception e) {
+            ErrorHandler.showError(e.getMessage(), e);
+        }
+    }
+
+    public void setOnSave(Runnable onSave) {
+        this.onSave = onSave;
+    }
+
+    public void setOnSaveAndContinue(Runnable onSaveAndContinue) {
+        this.onSaveAndContinue = onSaveAndContinue;
+    }
 }

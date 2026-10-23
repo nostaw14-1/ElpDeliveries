@@ -1,33 +1,25 @@
 package com.elpdeliveries.controller;
 
+import com.elpdeliveries.model.Delivery;
+import com.elpdeliveries.util.*;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.elpdeliveries.util.*;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import com.elpdeliveries.model.Delivery;
-
 public class MainController {
+    private final RouteOptimizationService VROS = new VroomRouteOptimizationService();
     @FXML
     private TableView<Delivery> deliveryTable;
     @FXML
@@ -75,27 +67,28 @@ public class MainController {
     private String currentView = "All Deliveries";
     private DBConnection dao;
     private Delivery selectedDelivery;
-    private final RouteOptimizationService VROS = new VroomRouteOptimizationService();
 
     @FXML
     public void initialize() {
-        try {
-            dao = new DBConnection();
-        } catch (Exception e) {
-            ErrorHandler.showError(e.getMessage(), e);
-            openSettings();
-        }
-        if (dao.getConnection() == null || !ConfigManager.exists()) {
-            openSettings();
+        if (ConfigManager.exists()) {
             try {
                 dao = new DBConnection();
             } catch (Exception e) {
-               ErrorHandler.showError(e.getMessage(), e);
+                ErrorHandler.showError(e.getMessage(), e);
+                openSettings();
             }
             if (dao.getConnection() == null) {
-                ErrorHandler.showError("Please configure a valid db connection!", new Exception());
-                return;
+                openSettings();
+                try {
+                    dao = new DBConnection();
+                } catch (Exception e) {
+                    ErrorHandler.showError(e.getMessage(), e);
+                    openSettings();
+                }
             }
+        } else {
+            ErrorHandler.showError("Please configure a database!", new RuntimeException());
+            openSettings();
         }
         deliveryTable.setPlaceholder(new Text("No deliveries to show"));
         loadDeliveries(currentView);
@@ -247,6 +240,11 @@ public class MainController {
                 controller.setDelivery(null);
                 stage.setTitle("Adding new delivery");
             }
+            controller.setOnSave(this::performSearch);
+            controller.setOnSaveAndContinue(() -> {
+                performSearch();
+                openAddEdit(null);
+            });
             stage.setScene(scene);
             stage.showAndWait();
             performSearch();
