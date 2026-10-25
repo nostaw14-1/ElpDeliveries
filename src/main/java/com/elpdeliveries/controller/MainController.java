@@ -173,7 +173,7 @@ public class MainController {
         }
     }
 
-    private List<Delivery> performSearch() {
+    private void performSearch() {
         Date date = null;
         Integer receiptNum = null;
         if (searchDatePicker.getValue() != null) {
@@ -183,13 +183,13 @@ public class MainController {
         if (!receiptField.getText().trim().isEmpty()) {
             receiptNum = Integer.parseInt(receiptField.getText());
         }
-        return loadDeliveries(currentView, date, fnameField.getText(), lnameField.getText(), receiptNum,
+        loadDeliveries(currentView, date, fnameField.getText(), lnameField.getText(), receiptNum,
                 uncompletedCB.isSelected());
 
     }
 
-    private List<Delivery> loadDeliveries(String view, Date date, String fname, String lname, Integer receiptNum,
-                                          Boolean uncompleted) {
+    private void loadDeliveries(String view, Date date, String fname, String lname, Integer receiptNum,
+                                Boolean uncompleted) {
         try {
             ArrayList<Delivery> deliveries = dao.getDeliveries(view, date, fname, lname, receiptNum, uncompleted);
             for (Delivery delivery : deliveries) {
@@ -207,10 +207,8 @@ public class MainController {
             todayLabel.setText("Deliveries for Today: " + dao.getTodayCount());
             uncompletedLabel.setText("Uncompleted Deliveries: " + dao.getUncompletedCount());
             countLabel.setText("Showing " + deliveries.size() + " Deliveries");
-            return deliveries;
         } catch (SQLException e) {
             ErrorHandler.showError(e.getMessage(), e);
-            return null;
         }
     }
 
@@ -259,7 +257,6 @@ public class MainController {
             if (deliveryTable != null) {
                 performSearch();
             }
-
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
@@ -278,8 +275,5 @@ public class MainController {
         phoneTf.setText(d.getPhnum() == null ? "" : d.getPhnum());
         homePhoneTf.setText(d.getHomePhone() == null ? "" : d.getHomePhone());
         dlvNotesTa.setText(d.getDlvNotes() == null ? "" : d.getDlvNotes());
-
     }
-
-
 }

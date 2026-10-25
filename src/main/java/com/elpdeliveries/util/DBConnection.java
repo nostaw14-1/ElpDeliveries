@@ -72,7 +72,7 @@ public class DBConnection {
             params.add(false);
         }
 
-        sql += " ORDER BY routeOrder IS NULL, routeOrder ASC";
+        sql += " ORDER BY routeOrder IS NULL, routeOrder, id ASC";
 
         PreparedStatement ps = conn.prepareStatement(sql);
 
