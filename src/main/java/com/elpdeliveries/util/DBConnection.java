@@ -1,4 +1,5 @@
 package com.elpdeliveries.util;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.sql.*;
 import java.sql.Date;
@@ -36,11 +37,11 @@ public class DBConnection {
         }
         switch (view) {
             case "Future Deliveries":
-                sql += " WHERE DATE(dlvDate) > ?";
+                sql += " WHERE DATE(dlv_date) > ?";
                 params.add(Date.valueOf(java.time.LocalDate.now()));
                 break;
             case "Deliveries for Today":
-                sql += " WHERE DATE(dlvDate) = ?";
+                sql += " WHERE DATE(dlv_date) = ?";
                 params.add(Date.valueOf(java.time.LocalDate.now()));
                 break;
             default:
@@ -48,7 +49,7 @@ public class DBConnection {
         }
 
         if (date != null) {
-            sql += sql.contains("WHERE") ? " AND dlvDate = ?" : " WHERE dlvDate = ?";
+            sql += sql.contains("WHERE") ? " AND dlv_date = ?" : " WHERE dlvDate = ?";
             params.add(date);
         }
 
@@ -63,7 +64,7 @@ public class DBConnection {
         }
 
         if (receiptId != null) {
-            sql += sql.contains("WHERE") ? " AND receiptNum = ?" : " WHERE receiptNum = ?";
+            sql += sql.contains("WHERE") ? " AND receipt_id = ?" : " WHERE receipt_ium = ?";
             params.add(receiptId);
         }
 
@@ -72,7 +73,7 @@ public class DBConnection {
             params.add(false);
         }
 
-        sql += " ORDER BY routeOrder IS NULL, routeOrder, id ASC";
+        sql += " ORDER BY route_order IS NULL, route_order, id ASC";
 
         PreparedStatement ps = conn.prepareStatement(sql);
 
@@ -92,29 +93,29 @@ public class DBConnection {
 
             latitude = rs.getBigDecimal("latitude") == null ? null : rs.getBigDecimal("latitude").doubleValue();
             longitude = rs.getBigDecimal("longitude") == null ? null : rs.getBigDecimal("longitude").doubleValue();
-            routeOrder = (Integer) rs.getObject("routeOrder");
+            routeOrder = (Integer) rs.getObject("route_order");
 
             Delivery delivery = new Delivery(
                     rs.getInt("id"),
-                    rs.getDate("createdDate"),
-                    rs.getDate("dlvDate"),
+                    rs.getDate("created_date"),
+                    rs.getDate("dlv_date"),
                     rs.getString("fname"),
                     rs.getString("lname"),
                     rs.getString("phnum"),
-                    rs.getString("homePhone"),
+                    rs.getString("home_phone"),
                     rs.getString("addr"),
-                    rs.getString("storeNotes"),
-                    rs.getString("dlvNotes"),
-                    rs.getInt("receiptNum"),
+                    "",
+                    rs.getString("notes"),
+                    rs.getInt("receipt_id"),
                     rs.getString("photo"),
                     rs.getBoolean("completed"),
-                    rs.getString("completedBy"),
-                    rs.getDate("completedDate"),
-                    rs.getBoolean("handedToCustomer"),
+                    rs.getString("completed_by"),
+                    rs.getDate("completed_date"),
+                    rs.getBoolean("handed_to_customer"),
                     latitude,
                     longitude,
                     routeOrder,
-                    rs.getBoolean("includeInRoute"));
+                    rs.getBoolean("included_in_route"));
 
             deliveries.add(delivery);
         }
@@ -124,17 +125,17 @@ public class DBConnection {
     }
 
     public void addDelivery(Delivery d) throws SQLException {
-        String sql = "INSERT INTO deliveries(fname,lname,phnum,receiptNum,addr,dlvDate,storeNotes,dlvNotes,handedToCustomer,completed,completedBy,completedDate,photo,latitude,longitude,routeOrder,homePhone,includeInRoute) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO deliveries(fname,lname,phnum,receipt_id,addr,dlv_date,notes,handed_to_customer,completed,completed_by,completed_date,photo,latitude,longitude,route_order,home_phone,included_in_route) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
         setProps(d, ps);
         ps.executeUpdate();
     }
 
     public void updateDelivery(Delivery d) throws SQLException {
-        String sql = "UPDATE deliveries SET fname=?,lname=?,phnum=?,receiptNum=?,addr=?,dlvDate=?,storeNotes=?,dlvNotes=?,handedToCustomer=?,completed=?,completedBy=?,completedDate=?,photo=?,latitude=?,longitude=?,routeOrder=?,homePhone=?,includeInRoute=? WHERE id=?";
+        String sql = "UPDATE deliveries SET fname=?,lname=?,phnum=?,receipt_id=?,addr=?,dlv_date=?,notes=?,handed_to_customer=?,completed=?,completed_by=?,completed_date=?,photo=?,latitude=?,longitude=?,route_order=?,home_phone=?,included_in_route=? WHERE id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         setProps(d, ps);
-        ps.setInt(19, d.getId());
+        ps.setInt(18, d.getId());
         ps.executeUpdate();
 
     }
@@ -146,30 +147,29 @@ public class DBConnection {
         ps.setInt(4, d.getReceiptId());
         ps.setString(5, d.getAddr());
         ps.setDate(6, d.getDlvDate());
-        ps.setString(7, d.getStoreNotes());
-        ps.setString(8, d.getDlvNotes());
-        ps.setBoolean(9, d.isHandedToCustomer());
-        ps.setBoolean(10, d.isCompleted());
-        ps.setString(11, d.getCompletedBy());
-        ps.setDate(12, d.getCompletedDate());
-        ps.setString(13, d.getPhoto());
+        ps.setString(7, d.getDlvNotes());
+        ps.setBoolean(8, d.isHandedToCustomer());
+        ps.setBoolean(9, d.isCompleted());
+        ps.setString(10, d.getCompletedBy());
+        ps.setDate(11, d.getCompletedDate());
+        ps.setString(12, d.getPhoto());
         if (d.getLatitude() == null) {
-            ps.setNull(14, Types.DECIMAL);
+            ps.setNull(13, Types.DECIMAL);
         } else {
-            ps.setDouble(14, d.getLatitude());
+            ps.setDouble(13, d.getLatitude());
         }
         if (d.getLongitude() == null) {
-            ps.setNull(15, Types.DECIMAL);
+            ps.setNull(14, Types.DECIMAL);
         } else {
-            ps.setDouble(15, d.getLongitude());
+            ps.setDouble(14, d.getLongitude());
         }
         if (d.getRouteOrder() == null) {
-            ps.setNull(16, Types.INTEGER);
+            ps.setNull(15, Types.INTEGER);
         } else {
-            ps.setInt(16, d.getRouteOrder());
+            ps.setInt(15, d.getRouteOrder());
         }
-        ps.setString(17, d.getHomePhone());
-        ps.setBoolean(18, d.isIncludedInRoute());
+        ps.setString(16, d.getHomePhone());
+        ps.setBoolean(17, d.isIncludedInRoute());
 
 
     }
@@ -182,7 +182,7 @@ public class DBConnection {
     }
 
     public int getTodayCount() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM deliveries WHERE dlvDate = ?";
+        String sql = "SELECT COUNT(*) FROM deliveries WHERE dlv_date = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setDate(1, Date.valueOf(java.time.LocalDate.now()));
         ResultSet rs = ps.executeQuery();
@@ -209,7 +209,7 @@ public class DBConnection {
     }
 
     public void clearRouteOrders() throws SQLException {
-        String sql = "UPDATE deliveries SET routeOrder=?";
+        String sql = "UPDATE deliveries SET route_order=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setNull(1, Types.INTEGER);
         ps.executeUpdate();
@@ -217,7 +217,7 @@ public class DBConnection {
 
     public void updateRouteOrders(List<Integer> orderedIds) throws SQLException {
         clearRouteOrders();
-        String sql = "UPDATE deliveries SET routeOrder=? WHERE id=?";
+        String sql = "UPDATE deliveries SET route_order=? WHERE id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         for (int i = 0; i < orderedIds.size(); i++) {
             ps.setInt(1, i+1);
@@ -228,7 +228,7 @@ public class DBConnection {
     }
 
     public void updateIncludeInRoute(int id, boolean includeInRoute) throws SQLException {
-        String sql = "UPDATE deliveries SET includeInRoute=? WHERE id=?";
+        String sql = "UPDATE deliveries SET include_in_route=? WHERE id=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setBoolean(1, includeInRoute);
             ps.setInt(2, id);
