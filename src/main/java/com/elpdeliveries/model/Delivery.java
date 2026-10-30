@@ -5,8 +5,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import java.sql.Date;
 
 public class Delivery {
-    private int id;
-    private final Date createdDate;
+    private Integer id;
+    private Date createdDate;
     private Date dlvDate;
     private String fname;
     private String lname;
@@ -19,20 +19,22 @@ public class Delivery {
     private String photo;
     private boolean completed;
     private String completedBy;
-    private final Date completedDate;
+    private Date completedDate;
     private boolean handedToCustomer;
     private Double latitude;
     private Double longitude;
-    private final Integer routeOrder;
+    private Integer routeOrder;
     private final BooleanProperty includedInRoute = new SimpleBooleanProperty(true);
 
-    public Delivery(int id, Date createdDate, Date dlvDate,
+    public Delivery() {}
+
+    public Delivery(Integer id, Date createdDate, Date dlvDate,
                     String fname, String lname, String phnum, String homePhone,
                     String addr, String storeNotes, String dlvNotes,
-                    int receiptId, String photo,
-                    boolean completed, String completedBy,
-                    Date completedDate, boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder
-                    , boolean includedInRoute) {
+                    Integer receiptId, String photo,
+                    Boolean completed, String completedBy,
+                    Date completedDate, Boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder
+                    , Boolean includedInRoute) {
         this.id = id;
         this.createdDate = createdDate;
         this.dlvDate = dlvDate;
@@ -58,10 +60,10 @@ public class Delivery {
     public Delivery(Date createdDate, Date dlvDate,
                     String fname, String lname, String phnum, String homePhone,
                     String addr, String storeNotes, String dlvNotes,
-                    int receiptId, String photo,
-                    boolean completed, String completedBy,
-                    Date completedDate, boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder,
-                    boolean includedInRoute) {
+                    Integer receiptId, String photo,
+                    Boolean completed, String completedBy,
+                    Date completedDate, Boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder,
+                    Boolean includedInRoute) {
         this.createdDate = createdDate;
         this.dlvDate = dlvDate;
         this.fname = fname;
@@ -139,19 +141,12 @@ public class Delivery {
         this.addr = addr;
     }
 
-    public String getStoreNotes() {
-        return storeNotes;
-    }
 
-    public void setStoreNotes(String storeNotes) {
-        this.storeNotes = storeNotes;
-    }
-
-    public String getDlvNotes() {
+    public String getNotes() {
         return dlvNotes;
     }
 
-    public void setDlvNotes(String dlvNotes) {
+    public void setNotes(String dlvNotes) {
         this.dlvNotes = dlvNotes;
     }
 

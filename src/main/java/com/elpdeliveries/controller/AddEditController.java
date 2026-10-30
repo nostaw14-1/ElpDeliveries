@@ -93,7 +93,7 @@ public class AddEditController {
         homePhoneTf.setText(delivery.getHomePhone());
         receiptTf.setText(delivery.getReceiptId() + "");
         addrTa.setText(delivery.getAddr());
-        driverNotesTa.setText(delivery.getDlvNotes());
+        driverNotesTa.setText(delivery.getNotes());
         completedByTf.setText(delivery.getCompletedBy());
         handedCb.setSelected(delivery.isHandedToCustomer());
         completedCb.setSelected(delivery.isCompleted());
@@ -162,8 +162,7 @@ public class AddEditController {
                 delivery.setPhnum(phoneTf.getText());
                 delivery.setHomePhone(homePhoneTf.getText());
                 delivery.setAddr(addrTa.getText());
-                delivery.setStoreNotes("");
-                delivery.setDlvNotes(driverNotesTa.getText());
+                delivery.setNotes(driverNotesTa.getText());
                 delivery.setReceiptId(Integer.parseInt(receiptTf.getText().trim()));
                 delivery.setCompleted(completedCb.isSelected());
                 delivery.setCompletedBy(completedByTf.getText());

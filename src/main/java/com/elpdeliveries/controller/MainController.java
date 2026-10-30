@@ -159,6 +159,16 @@ public class MainController {
     }
 
     @FXML
+    private void handleTest() {
+        ApiClient client = new ApiClient();
+        try {
+            deliveryTable.setItems(FXCollections.observableArrayList(client.getDeliveries()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
     private void handleGenerateRoute() {
         try {
             List<Delivery> deliveries = deliveryTable.getItems().stream().filter(Delivery::isIncludedInRoute).toList();
@@ -274,6 +284,6 @@ public class MainController {
         receiptTf.setText(String.valueOf(d.getReceiptId()));
         phoneTf.setText(d.getPhnum() == null ? "" : d.getPhnum());
         homePhoneTf.setText(d.getHomePhone() == null ? "" : d.getHomePhone());
-        dlvNotesTa.setText(d.getDlvNotes() == null ? "" : d.getDlvNotes());
+        dlvNotesTa.setText(d.getNotes() == null ? "" : d.getNotes());
     }
 }

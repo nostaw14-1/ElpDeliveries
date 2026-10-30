@@ -147,7 +147,7 @@ public class DBConnection {
         ps.setInt(4, d.getReceiptId());
         ps.setString(5, d.getAddr());
         ps.setDate(6, d.getDlvDate());
-        ps.setString(7, d.getDlvNotes());
+        ps.setString(7, d.getNotes());
         ps.setBoolean(8, d.isHandedToCustomer());
         ps.setBoolean(9, d.isCompleted());
         ps.setString(10, d.getCompletedBy());
