@@ -1,6 +1,7 @@
 package com.elpdeliveries.util;
 
 import com.elpdeliveries.model.Delivery;
+import com.elpdeliveries.model.DeliveryStats;
 import com.elpdeliveries.model.DeliveryView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -130,6 +131,23 @@ public class ApiClient {
                             "\n" +
                             response.body());
         }
+    }
+
+    public DeliveryStats getStats() throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/deliveries/stats"))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() > 204) {
+            throw new RuntimeException(
+                    "API Error: " +
+                            response.statusCode() +
+                            "\n" +
+                            response.body());
+        }
+        return mapper.readValue(response.body(), DeliveryStats.class);
     }
 
 }

@@ -16,7 +16,7 @@ public class Delivery {
     private String phnum;
     private String homePhone;
     private String addr;
-    private String dlvNotes;
+    private String notes;
     private String receiptId;
     private String photo;
     private Boolean completed;
@@ -32,7 +32,7 @@ public class Delivery {
 
     public Delivery(Integer id, LocalDate createdDate, LocalDate dlvDate,
                     String fname, String lname, String phnum, String homePhone,
-                    String addr, String dlvNotes,
+                    String addr, String notes,
                     String receiptId, String photo,
                     Boolean completed, String completedBy,
                     LocalDate completedDate, Boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder
@@ -45,7 +45,7 @@ public class Delivery {
         this.phnum = phnum;
         this.homePhone = homePhone;
         this.addr = addr;
-        this.dlvNotes = dlvNotes;
+        this.notes = notes;
         this.receiptId = receiptId;
         this.photo = photo;
         this.completed = completed;
@@ -60,7 +60,7 @@ public class Delivery {
 
     public Delivery(LocalDate createdDate, LocalDate dlvDate,
                     String fname, String lname, String phnum, String homePhone,
-                    String addr, String dlvNotes,
+                    String addr, String notes,
                     String receiptId, String photo,
                     Boolean completed, String completedBy,
                     LocalDate completedDate, Boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder,
@@ -72,7 +72,7 @@ public class Delivery {
         this.phnum = phnum;
         this.homePhone = homePhone;
         this.addr = addr;
-        this.dlvNotes = dlvNotes;
+        this.notes = notes;
         this.receiptId = receiptId;
         this.photo = photo;
         this.completed = completed;
@@ -142,11 +142,11 @@ public class Delivery {
     }
 
     public String getNotes() {
-        return dlvNotes;
+        return notes;
     }
 
     public void setNotes(String dlvNotes) {
-        this.dlvNotes = dlvNotes;
+        this.notes = dlvNotes;
     }
 
     public String getReceiptId() {

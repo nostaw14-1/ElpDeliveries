@@ -66,6 +66,7 @@ public class AddEditController {
 
     @FXML
     private void initialize() {
+        Platform.runLater(() -> receiptTf.requestFocus());
         qtyCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("quantity"));
         itemCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("description"));
         priceCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("priceString"));
@@ -113,7 +114,6 @@ public class AddEditController {
 
     @FXML
     private boolean saveDelivery() {
-        DeliveryGeocodingService geocoder = new DeliveryGeocodingService();
         try {
             LocalDate deliveryDate = null;
             if (dfdDatePicker.getValue() != null) {
@@ -139,7 +139,6 @@ public class AddEditController {
                         null,
                         null,
                         true);
-                geocoder.geocodeDelivery(newDelivery);
                 ApiClient.getInstance().addDelivery(newDelivery);
                 AppLogger.info("Added new delivery");
 
@@ -156,7 +155,6 @@ public class AddEditController {
                 delivery.setHandedToCustomer(handedCb.isSelected());
                 delivery.setDlvDate(deliveryDate);
                 delivery.setPhoto(photoPath);
-                geocoder.geocodeDelivery(delivery);
                 AppLogger.info("Updated delivery: " + delivery.getId());
                 ApiClient.getInstance().updateDelivery(delivery);
             }

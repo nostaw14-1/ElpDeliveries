@@ -1,6 +1,7 @@
 package com.elpdeliveries.controller;
 
 import com.elpdeliveries.model.Delivery;
+import com.elpdeliveries.model.DeliveryStats;
 import com.elpdeliveries.model.DeliveryView;
 import com.elpdeliveries.util.*;
 import javafx.collections.FXCollections;
@@ -14,7 +15,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.util.List;
 
 import static com.elpdeliveries.model.DeliveryView.TODAY;
@@ -205,6 +205,7 @@ public class MainController {
     private void loadDeliveries(DeliveryView view, Date date, String fname, String lname, Integer receiptNum,
                                 Boolean uncompleted) {
         try {
+            DeliveryStats stats = ApiClient.getInstance().getStats();
             List<Delivery> deliveries = ApiClient.getInstance()
                     .getDeliveries(view, date, fname, lname, receiptNum, uncompleted);
             for (Delivery delivery : deliveries) {
@@ -219,8 +220,8 @@ public class MainController {
             }
             deliveryTable.setItems(FXCollections
                     .observableArrayList(deliveries));
-            todayLabel.setText("Deliveries for Today: " + dao.getTodayCount());
-            uncompletedLabel.setText("Uncompleted Deliveries: " + dao.getUncompletedCount());
+            todayLabel.setText("Deliveries for Today: " + stats.todayCount());
+            uncompletedLabel.setText("Uncompleted Deliveries: " + stats.uncompletedCount());
             countLabel.setText("Showing " + deliveries.size() + " Deliveries");
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
