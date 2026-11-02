@@ -14,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.Setter;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -61,7 +62,9 @@ public class AddEditController {
     private String photoPath;
     private ImageView imageView;
     private Delivery delivery;
+    @Setter
     private Runnable onSave;
+    @Setter
     private Runnable onSaveAndContinue;
 
     @FXML
@@ -357,13 +360,5 @@ public class AddEditController {
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
-    }
-
-    public void setOnSave(Runnable onSave) {
-        this.onSave = onSave;
-    }
-
-    public void setOnSaveAndContinue(Runnable onSaveAndContinue) {
-        this.onSaveAndContinue = onSaveAndContinue;
     }
 }
