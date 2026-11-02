@@ -29,9 +29,10 @@
                <children>
                   <TabPane fx:id="tabPane" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                      <Tab text="Deliveries for Today" />
-                        <Tab text="Future Deliveries" />
-                      <Tab text="All Deliveries" />
+                      <Tab fx:id="todayTab" text="Deliveries for Today" />
+                        <Tab fx:id="futureTab" text="Future Deliveries" />
+                      <Tab fx:id="allTab" text="All Deliveries" />
+                        <Tab fx:id="routedTab" text="Routed" />
                     </tabs>
                   </TabPane>
                   <TableView fx:id="deliveryTable" editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
@@ -135,7 +136,6 @@
             <Button mnemonicParsing="false" onAction="#handleAdd" text="Add" />
             <Button mnemonicParsing="false" onAction="#handleGenerateRoute" text="Generate Route" />
             <Button mnemonicParsing="false" onAction="#handleSettings" text="Settings" />
-            <Button mnemonicParsing="false" onAction="#handleTest" text="Button" />
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <Text fx:id="todayLabel" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Deliveries for Today: 0" />
             <Text fx:id="uncompletedLabel" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Uncompleted Deliveries: 0" />

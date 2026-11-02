@@ -16,13 +16,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.sql.Date;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
 public class AddEditController {
-    private DBConnection dao;
     @FXML
     private TextField fnameTf;
     @FXML
@@ -69,11 +66,6 @@ public class AddEditController {
 
     @FXML
     private void initialize() {
-        try {
-            dao = new DBConnection();
-        } catch (Exception e) {
-            ErrorHandler.showError(e.getMessage(), e);
-        }
         qtyCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("quantity"));
         itemCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("description"));
         priceCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("priceString"));
@@ -91,7 +83,7 @@ public class AddEditController {
         lnameTf.setText(delivery.getLname());
         phoneTf.setText(delivery.getPhnum());
         homePhoneTf.setText(delivery.getHomePhone());
-        receiptTf.setText(delivery.getReceiptId() + "");
+        receiptTf.setText(delivery.getReceiptId());
         addrTa.setText(delivery.getAddr());
         driverNotesTa.setText(delivery.getNotes());
         completedByTf.setText(delivery.getCompletedBy());
@@ -104,7 +96,7 @@ public class AddEditController {
             completedAtTf.setText(delivery.getCompletedDate().toString());
         }
         if (delivery.getDlvDate() != null) {
-            dfdDatePicker.setValue(delivery.getDlvDate().toLocalDate());
+            dfdDatePicker.setValue(delivery.getDlvDate());
         }
 
         if (delivery.getPhoto() != null && !delivery.getPhoto().isEmpty()) {
@@ -123,13 +115,9 @@ public class AddEditController {
     private boolean saveDelivery() {
         DeliveryGeocodingService geocoder = new DeliveryGeocodingService();
         try {
-            Date deliveryDate = null;
-            int receiptId = 0;
+            LocalDate deliveryDate = null;
             if (dfdDatePicker.getValue() != null) {
-                deliveryDate = Date.valueOf(dfdDatePicker.getValue());
-            }
-            if (receiptTf.getText() != null) {
-                receiptId = Integer.parseInt(receiptTf.getText());
+                deliveryDate = dfdDatePicker.getValue();
             }
             if (delivery == null) {
                 Delivery newDelivery = new Delivery(
@@ -140,9 +128,8 @@ public class AddEditController {
                         phoneTf.getText(),
                         homePhoneTf.getText(),
                         addrTa.getText(),
-                        "",
                         driverNotesTa.getText(),
-                        receiptId,
+                        receiptTf.getText(),
                         photoPath,
                         completedCb.isSelected(),
                         completedByTf.getText(),
@@ -153,7 +140,7 @@ public class AddEditController {
                         null,
                         true);
                 geocoder.geocodeDelivery(newDelivery);
-                dao.addDelivery(newDelivery);
+                ApiClient.getInstance().addDelivery(newDelivery);
                 AppLogger.info("Added new delivery");
 
             } else {
@@ -163,7 +150,7 @@ public class AddEditController {
                 delivery.setHomePhone(homePhoneTf.getText());
                 delivery.setAddr(addrTa.getText());
                 delivery.setNotes(driverNotesTa.getText());
-                delivery.setReceiptId(Integer.parseInt(receiptTf.getText().trim()));
+                delivery.setReceiptId(receiptTf.getText().trim());
                 delivery.setCompleted(completedCb.isSelected());
                 delivery.setCompletedBy(completedByTf.getText());
                 delivery.setHandedToCustomer(handedCb.isSelected());
@@ -171,7 +158,7 @@ public class AddEditController {
                 delivery.setPhoto(photoPath);
                 geocoder.geocodeDelivery(delivery);
                 AppLogger.info("Updated delivery: " + delivery.getId());
-                dao.updateDelivery(delivery);
+                ApiClient.getInstance().updateDelivery(delivery);
             }
         return true;
         } catch (Exception e) {
@@ -230,13 +217,13 @@ public class AddEditController {
             if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 if (delivery != null) {
                     AppLogger.info("Deleting delivery: " + delivery.getId());
-                    dao.deleteDelivery(delivery.getId());
+                    ApiClient.getInstance().deleteDelivery(delivery.getId());
                     Stage stage = (Stage) completedCb.getScene().getWindow();
                     stage.close();
                 }
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             ErrorHandler.showError("Delete failed!", e);
         }
     }
@@ -280,7 +267,7 @@ public class AddEditController {
                 return false;
             }
 
-            ReceiptLookupResult foundPatients = patientDao.findPatientsById(Integer.parseInt(receiptTf.getText().trim()));
+            ReceiptLookupResult foundPatients = patientDao.findPatientsById(receiptTf.getText().trim());
             if (foundPatients.getItems().isEmpty()) {
                 ErrorHandler.showError("No matches found", new Exception("No matches found"));
                 return false;

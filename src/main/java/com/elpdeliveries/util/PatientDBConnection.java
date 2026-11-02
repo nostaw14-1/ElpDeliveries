@@ -38,7 +38,7 @@ public class PatientDBConnection {
         patient.setMobileNumber(rs.getString("MobileNumber"));
     }
 
-    public ReceiptLookupResult findPatientsById(int receiptId) throws SQLException {
+    public ReceiptLookupResult findPatientsById(String receiptId) throws SQLException {
         AppLogger.info("Looking for receipts matching " + receiptId);
         ReceiptLookupResult result = new ReceiptLookupResult();
         String sql = """
@@ -62,7 +62,7 @@ public class PatientDBConnection {
 
         PreparedStatement ps = conn.prepareStatement(sql);
 
-        ps.setInt(1, receiptId);
+        ps.setString(1, receiptId);
 
         ResultSet rs = ps.executeQuery();
 

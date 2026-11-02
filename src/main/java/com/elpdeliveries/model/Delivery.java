@@ -1,26 +1,28 @@
 package com.elpdeliveries.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Delivery {
     private Integer id;
-    private Date createdDate;
-    private Date dlvDate;
+    private LocalDate createdDate;
+    private LocalDate dlvDate;
     private String fname;
     private String lname;
     private String phnum;
     private String homePhone;
     private String addr;
-    private String storeNotes;
     private String dlvNotes;
-    private int receiptId;
+    private String receiptId;
     private String photo;
-    private boolean completed;
+    private Boolean completed;
     private String completedBy;
-    private Date completedDate;
-    private boolean handedToCustomer;
+    private LocalDate completedDate;
+    private Boolean handedToCustomer;
     private Double latitude;
     private Double longitude;
     private Integer routeOrder;
@@ -28,12 +30,12 @@ public class Delivery {
 
     public Delivery() {}
 
-    public Delivery(Integer id, Date createdDate, Date dlvDate,
+    public Delivery(Integer id, LocalDate createdDate, LocalDate dlvDate,
                     String fname, String lname, String phnum, String homePhone,
-                    String addr, String storeNotes, String dlvNotes,
-                    Integer receiptId, String photo,
+                    String addr, String dlvNotes,
+                    String receiptId, String photo,
                     Boolean completed, String completedBy,
-                    Date completedDate, Boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder
+                    LocalDate completedDate, Boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder
                     , Boolean includedInRoute) {
         this.id = id;
         this.createdDate = createdDate;
@@ -43,7 +45,6 @@ public class Delivery {
         this.phnum = phnum;
         this.homePhone = homePhone;
         this.addr = addr;
-        this.storeNotes = storeNotes;
         this.dlvNotes = dlvNotes;
         this.receiptId = receiptId;
         this.photo = photo;
@@ -57,12 +58,12 @@ public class Delivery {
         this.includedInRoute.set(includedInRoute);
     }
 
-    public Delivery(Date createdDate, Date dlvDate,
+    public Delivery(LocalDate createdDate, LocalDate dlvDate,
                     String fname, String lname, String phnum, String homePhone,
-                    String addr, String storeNotes, String dlvNotes,
-                    Integer receiptId, String photo,
+                    String addr, String dlvNotes,
+                    String receiptId, String photo,
                     Boolean completed, String completedBy,
-                    Date completedDate, Boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder,
+                    LocalDate completedDate, Boolean handedToCustomer, Double latitude, Double longitude, Integer routeOrder,
                     Boolean includedInRoute) {
         this.createdDate = createdDate;
         this.dlvDate = dlvDate;
@@ -71,7 +72,6 @@ public class Delivery {
         this.phnum = phnum;
         this.homePhone = homePhone;
         this.addr = addr;
-        this.storeNotes = storeNotes;
         this.dlvNotes = dlvNotes;
         this.receiptId = receiptId;
         this.photo = photo;
@@ -85,19 +85,19 @@ public class Delivery {
         this.includedInRoute.set(includedInRoute);
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public Date getCreatedDate() {
+    public LocalDate getCreatedDate() {
         return createdDate;
     }
 
-    public Date getDlvDate() {
+    public LocalDate getDlvDate() {
         return dlvDate;
     }
 
-    public void setDlvDate(Date dlvDate) {
+    public void setDlvDate(LocalDate dlvDate) {
         this.dlvDate = dlvDate;
     }
 
@@ -141,7 +141,6 @@ public class Delivery {
         this.addr = addr;
     }
 
-
     public String getNotes() {
         return dlvNotes;
     }
@@ -150,11 +149,11 @@ public class Delivery {
         this.dlvNotes = dlvNotes;
     }
 
-    public int getReceiptId() {
+    public String getReceiptId() {
         return receiptId;
     }
 
-    public void setReceiptId(int receiptId) {
+    public void setReceiptId(String receiptId) {
         this.receiptId = receiptId;
     }
 
@@ -166,11 +165,11 @@ public class Delivery {
         this.photo = photo;
     }
 
-    public boolean isCompleted() {
+    public Boolean isCompleted() {
         return completed;
     }
 
-    public void setCompleted(boolean completed) {
+    public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
 
@@ -182,11 +181,11 @@ public class Delivery {
         this.completedBy = completedBy;
     }
 
-    public Date getCompletedDate() {
+    public LocalDate getCompletedDate() {
         return completedDate;
     }
 
-    public boolean isHandedToCustomer() {
+    public Boolean isHandedToCustomer() {
         return handedToCustomer;
     }
 
@@ -214,7 +213,7 @@ public class Delivery {
         return routeOrder;
     }
 
-    public boolean hasCoordinates() {
+    public Boolean hasCoordinates() {
         return latitude != null && longitude != null;
     }
 
@@ -222,11 +221,11 @@ public class Delivery {
         return includedInRoute;
     }
 
-    public boolean isIncludedInRoute() {
+    public Boolean isIncludedInRoute() {
         return includedInRoute.get();
     }
 
-    public void setIncludedInRoute(boolean value) {
+    public void setIncludedInRoute(Boolean value) {
         includedInRoute.set(value);
     }
 

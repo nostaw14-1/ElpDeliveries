@@ -1,6 +1,7 @@
 package com.elpdeliveries.controller;
 
 import com.elpdeliveries.model.Delivery;
+import com.elpdeliveries.model.DeliveryView;
 import com.elpdeliveries.util.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -12,11 +13,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.elpdeliveries.model.DeliveryView.TODAY;
 
 public class MainController {
     private final RouteOptimizationService VROS = new VroomRouteOptimizationService();
@@ -64,7 +65,15 @@ public class MainController {
     private TextField homePhoneTf;
     @FXML
     private TextArea dlvNotesTa;
-    private String currentView = "Deliveries for Today";
+    @FXML
+    private Tab todayTab;
+    @FXML
+    private Tab futureTab;
+    @FXML
+    private Tab allTab;
+    @FXML
+    private Tab routedTab;
+    private DeliveryView currentView = TODAY;
     private DBConnection dao;
     private Delivery selectedDelivery;
 
@@ -91,11 +100,16 @@ public class MainController {
             openSettings();
         }
 
+        todayTab.setUserData(DeliveryView.TODAY);
+        futureTab.setUserData(DeliveryView.FUTURE);
+        allTab.setUserData(DeliveryView.ALL);
+        routedTab.setUserData(DeliveryView.ROUTED);
+
         deliveryTable.setPlaceholder(new Text("No deliveries to show"));
         loadDeliveries(currentView);
 
         tabPane.getSelectionModel().selectedItemProperty().addListener((_, _, newTab) -> {
-            currentView = newTab.getText();
+            currentView = (DeliveryView) newTab.getUserData();
             performSearch();
         });
 
@@ -159,16 +173,6 @@ public class MainController {
     }
 
     @FXML
-    private void handleTest() {
-        ApiClient client = new ApiClient();
-        try {
-            deliveryTable.setItems(FXCollections.observableArrayList(client.getDeliveries()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @FXML
     private void handleGenerateRoute() {
         try {
             List<Delivery> deliveries = deliveryTable.getItems().stream().filter(Delivery::isIncludedInRoute).toList();
@@ -198,16 +202,17 @@ public class MainController {
 
     }
 
-    private void loadDeliveries(String view, Date date, String fname, String lname, Integer receiptNum,
+    private void loadDeliveries(DeliveryView view, Date date, String fname, String lname, Integer receiptNum,
                                 Boolean uncompleted) {
         try {
-            ArrayList<Delivery> deliveries = dao.getDeliveries(view, date, fname, lname, receiptNum, uncompleted);
+            List<Delivery> deliveries = ApiClient.getInstance()
+                    .getDeliveries(view, date, fname, lname, receiptNum, uncompleted);
             for (Delivery delivery : deliveries) {
                 delivery.includedInRouteProperty()
-                        .addListener((obs, oldVal, newVal) -> {
+                        .addListener((_, _, newVal) -> {
                             try {
-                                dao.updateIncludeInRoute(delivery.getId(), newVal);
-                            } catch (SQLException e) {
+                                ApiClient.getInstance().updateIncludedInRoute(delivery.getId(), newVal);
+                            } catch (Exception e) {
                                 ErrorHandler.showError("Unable to save route preference", e);
                             }
                         });
@@ -217,12 +222,12 @@ public class MainController {
             todayLabel.setText("Deliveries for Today: " + dao.getTodayCount());
             uncompletedLabel.setText("Uncompleted Deliveries: " + dao.getUncompletedCount());
             countLabel.setText("Showing " + deliveries.size() + " Deliveries");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
     }
 
-    private void loadDeliveries(String view) {
+    private void loadDeliveries(DeliveryView view) {
         loadDeliveries(view, null, null, null, null, null);
     }
 
@@ -247,7 +252,7 @@ public class MainController {
             stage.setScene(scene);
             stage.showAndWait();
             performSearch();
-        } catch (IOException e) {
+        } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
     }

@@ -38,7 +38,9 @@ public class VroomJsonUtil {
         ArrayNode end = vehicle.putArray("end");
         end.add(depotLongitude);
         end.add(depotLatitude);
-        return MAPPER.writeValueAsString(root);
+        String out = MAPPER.writeValueAsString(root);
+        AppLogger.info(out);
+        return out;
     }
 
     public static List<Integer> parse(String responseJson) throws Exception {

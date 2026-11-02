@@ -4,6 +4,7 @@ import java.util.*;
 import java.sql.*;
 import java.sql.Date;
 import com.elpdeliveries.model.Delivery;
+import com.elpdeliveries.model.DeliveryView;
 
 public class DBConnection {
     protected String server;
@@ -29,18 +30,18 @@ public class DBConnection {
         return conn;
     }
 
-    public ArrayList<Delivery> getDeliveries(String view, Date date, String fname, String lname, Integer receiptId, Boolean uncompleted) throws SQLException {
+    public ArrayList<Delivery> getDeliveries(DeliveryView view, Date date, String fname, String lname, Integer receiptId, Boolean uncompleted) throws SQLException {
         String sql = "SELECT * FROM deliveries";
         ArrayList<Object> params = new ArrayList<>();
         if (view == null) {
-            view = "All Deliveries";
+            view = DeliveryView.ALL;
         }
         switch (view) {
-            case "Future Deliveries":
+            case FUTURE:
                 sql += " WHERE DATE(dlv_date) > ?";
                 params.add(Date.valueOf(java.time.LocalDate.now()));
                 break;
-            case "Deliveries for Today":
+            case TODAY:
                 sql += " WHERE DATE(dlv_date) = ?";
                 params.add(Date.valueOf(java.time.LocalDate.now()));
                 break;
@@ -97,20 +98,19 @@ public class DBConnection {
 
             Delivery delivery = new Delivery(
                     rs.getInt("id"),
-                    rs.getDate("created_date"),
-                    rs.getDate("dlv_date"),
+                    rs.getDate("created_date").toLocalDate(),
+                    rs.getDate("dlv_date").toLocalDate(),
                     rs.getString("fname"),
                     rs.getString("lname"),
                     rs.getString("phnum"),
                     rs.getString("home_phone"),
                     rs.getString("addr"),
-                    "",
                     rs.getString("notes"),
-                    rs.getInt("receipt_id"),
+                    rs.getString("receipt_id"),
                     rs.getString("photo"),
                     rs.getBoolean("completed"),
                     rs.getString("completed_by"),
-                    rs.getDate("completed_date"),
+                    rs.getDate("completed_date").toLocalDate(),
                     rs.getBoolean("handed_to_customer"),
                     latitude,
                     longitude,
@@ -144,14 +144,14 @@ public class DBConnection {
         ps.setString(1, d.getFname());
         ps.setString(2, d.getLname());
         ps.setString(3, d.getPhnum());
-        ps.setInt(4, d.getReceiptId());
+        ps.setString(4, d.getReceiptId());
         ps.setString(5, d.getAddr());
-        ps.setDate(6, d.getDlvDate());
+        ps.setDate(6, Date.valueOf(d.getDlvDate()));
         ps.setString(7, d.getNotes());
         ps.setBoolean(8, d.isHandedToCustomer());
         ps.setBoolean(9, d.isCompleted());
         ps.setString(10, d.getCompletedBy());
-        ps.setDate(11, d.getCompletedDate());
+        ps.setDate(11, Date.valueOf(d.getCompletedDate()));
         ps.setString(12, d.getPhoto());
         if (d.getLatitude() == null) {
             ps.setNull(13, Types.DECIMAL);
