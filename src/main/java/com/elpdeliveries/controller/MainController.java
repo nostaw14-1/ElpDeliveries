@@ -21,7 +21,6 @@ import java.util.List;
 import static com.elpdeliveries.model.DeliveryView.TODAY;
 
 public class MainController {
-    private final RouteOptimizationService VROS = new VroomRouteOptimizationService();
     @FXML
     private TableView<Delivery> deliveryTable;
     @FXML
@@ -109,7 +108,7 @@ public class MainController {
         addrCol.setCellValueFactory(new PropertyValueFactory<>("addr"));
         dfdCol.setCellValueFactory(new PropertyValueFactory<>("dlvDate"));
         completedCol.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isCompleted()));
+                new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().getCompleted()));
 
         completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
         deliverCol.setCellValueFactory(cellData -> cellData.getValue().includedInRouteProperty());

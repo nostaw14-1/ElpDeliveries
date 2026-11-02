@@ -88,8 +88,8 @@ public class AddEditController {
         addrTa.setText(delivery.getAddr());
         driverNotesTa.setText(delivery.getNotes());
         completedByTf.setText(delivery.getCompletedBy());
-        handedCb.setSelected(delivery.isHandedToCustomer());
-        completedCb.setSelected(delivery.isCompleted());
+        handedCb.setSelected(delivery.getHandedToCustomer());
+        completedCb.setSelected(delivery.getCompleted());
         if (delivery.getCreatedDate() != null) {
             createdAtTf.setText(delivery.getCreatedDate().toString());
         }

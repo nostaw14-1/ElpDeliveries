@@ -1,19 +1,14 @@
 package com.elpdeliveries.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 
+@Setter
+@Getter
+@NoArgsConstructor
 public class RouteRequest {
-    public List<Integer> getDeliveryIds() {
-        return deliveryIds;
-    }
-
     private List<Integer> deliveryIds;
-    public RouteRequest() {
-    }
-
-    public void setDeliveryIds(List<Integer> deliveryIds) {
-        this.deliveryIds = deliveryIds;
-    }
-
-
 }

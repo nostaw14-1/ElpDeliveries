@@ -2,11 +2,14 @@ package com.elpdeliveries.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 public class Delivery {
     private Integer id;
     private LocalDate createdDate;
@@ -27,8 +30,6 @@ public class Delivery {
     private Double longitude;
     private Integer routeOrder;
     private final BooleanProperty includedInRoute = new SimpleBooleanProperty(true);
-
-    public Delivery() {}
 
     public Delivery(Integer id, LocalDate createdDate, LocalDate dlvDate,
                     String fname, String lname, String phnum, String homePhone,
@@ -83,138 +84,6 @@ public class Delivery {
         this.longitude = longitude;
         this.routeOrder = routeOrder;
         this.includedInRoute.set(includedInRoute);
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public LocalDate getCreatedDate() {
-        return createdDate;
-    }
-
-    public LocalDate getDlvDate() {
-        return dlvDate;
-    }
-
-    public void setDlvDate(LocalDate dlvDate) {
-        this.dlvDate = dlvDate;
-    }
-
-    public String getFname() {
-        return fname;
-    }
-
-    public void setFname(String fname) {
-        this.fname = fname;
-    }
-
-    public String getLname() {
-        return lname;
-    }
-
-    public void setLname(String lname) {
-        this.lname = lname;
-    }
-
-    public String getPhnum() {
-        return phnum;
-    }
-
-    public void setPhnum(String phnum) {
-        this.phnum = phnum;
-    }
-
-    public String getHomePhone() {
-        return homePhone;
-    }
-
-    public void setHomePhone(String homePhone) {
-        this.homePhone = homePhone;
-    }
-
-    public String getAddr() {
-        return addr;
-    }
-
-    public void setAddr(String addr) {
-        this.addr = addr;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String dlvNotes) {
-        this.notes = dlvNotes;
-    }
-
-    public String getReceiptId() {
-        return receiptId;
-    }
-
-    public void setReceiptId(String receiptId) {
-        this.receiptId = receiptId;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public Boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
-    }
-
-    public String getCompletedBy() {
-        return completedBy;
-    }
-
-    public void setCompletedBy(String completedBy) {
-        this.completedBy = completedBy;
-    }
-
-    public LocalDate getCompletedDate() {
-        return completedDate;
-    }
-
-    public Boolean isHandedToCustomer() {
-        return handedToCustomer;
-    }
-
-    public void setHandedToCustomer(boolean handedToCustomer) {
-        this.handedToCustomer = handedToCustomer;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Integer getRouteOrder() {
-        return routeOrder;
-    }
-
-    public Boolean hasCoordinates() {
-        return latitude != null && longitude != null;
     }
 
     public BooleanProperty includedInRouteProperty() {
