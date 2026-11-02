@@ -1,4 +1,4 @@
 package com.elpdeliveries.model;
 
-public record GeocodeResult(Double latitude, Double longitude) {
+public record GeocodeResult(Double longitude, Double latitude) {
 }

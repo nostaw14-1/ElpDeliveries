@@ -3,6 +3,7 @@ package com.elpdeliveries.util;
 import com.elpdeliveries.model.Delivery;
 import com.elpdeliveries.model.DeliveryStats;
 import com.elpdeliveries.model.DeliveryView;
+import com.elpdeliveries.model.GeocodeResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -148,6 +149,25 @@ public class ApiClient {
                             response.body());
         }
         return mapper.readValue(response.body(), DeliveryStats.class);
+    }
+
+    public GeocodeResult geocode(String address) throws Exception {
+        String encoded = URLEncoder.encode(address, StandardCharsets.UTF_8);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/geocode?addr=" + encoded))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() > 204) {
+            throw new RuntimeException(
+                    "API Error: " +
+                            response.statusCode() +
+                            "\n" +
+                            response.body());
+        }
+        return mapper.readValue(response.body(), GeocodeResult.class);
     }
 
 }

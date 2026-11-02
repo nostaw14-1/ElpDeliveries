@@ -42,7 +42,7 @@ public class NominatimGeocodingService implements GeocodingService {
             Double latitude = result.get("lat").asDouble();
             Double longitude = result.get("lon").asDouble();
             AppLogger.info("Returned: lat=" + latitude + "\nlong=" + longitude);
-            return new GeocodeResult(latitude, longitude);
+            return new GeocodeResult(longitude, latitude);
 
         } catch (Exception e) {
             AppLogger.error("Failed to geocode address " + address, e);

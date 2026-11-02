@@ -1,10 +1,7 @@
 package com.elpdeliveries.controller;
 
 import com.elpdeliveries.model.GeocodeResult;
-import com.elpdeliveries.util.ConfigManager;
-import com.elpdeliveries.util.ErrorHandler;
-import com.elpdeliveries.util.GeocodingService;
-import com.elpdeliveries.util.NominatimGeocodingService;
+import com.elpdeliveries.util.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
@@ -129,9 +126,8 @@ public class SettingsController {
         if (addrTf.getText().isBlank()) {
             return;
         }
-        GeocodingService geocoder = new NominatimGeocodingService();
         try {
-            GeocodeResult result = geocoder.geocode(addrTf.getText());
+            GeocodeResult result = ApiClient.getInstance().geocode(addrTf.getText());
             if (result == null) {
                 throw new RuntimeException("Could not find address!");
             }

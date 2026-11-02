@@ -175,7 +175,7 @@ public class MainController {
     @FXML
     private void handleGenerateRoute() {
         try {
-            List<Delivery> deliveries = deliveryTable.getItems().stream().filter(Delivery::isIncludedInRoute).toList();
+            List<Delivery> deliveries = deliveryTable.getItems();
             List<Integer> orderedIds = VROS.optimiseRoute(deliveries,
                     Double.parseDouble(ConfigManager.getDepotLat()),
                     Double.parseDouble(ConfigManager.getDepotLong()));
