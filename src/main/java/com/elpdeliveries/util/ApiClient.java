@@ -1,9 +1,6 @@
 package com.elpdeliveries.util;
 
-import com.elpdeliveries.model.Delivery;
-import com.elpdeliveries.model.DeliveryStats;
-import com.elpdeliveries.model.DeliveryView;
-import com.elpdeliveries.model.GeocodeResult;
+import com.elpdeliveries.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,6 +12,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 public class ApiClient {
@@ -24,14 +22,14 @@ public class ApiClient {
 
     public static ApiClient getInstance() {return INSTANCE;}
 
-    public List<Delivery> getDeliveries(DeliveryView view, Date date, String fname,
+    public List<Delivery> getDeliveries(DeliveryView view, LocalDate date, String fname,
                                         String lname, Integer receiptId, Boolean uncompleted) throws Exception {
         String url = BASE_URL + "/deliveries/search";
 
         url += "?view=" + view.toString();
 
         if (date != null) {
-            url += "&dlvDate=" + date.toLocalDate();
+            url += "&dlvDate=" + date;
         }
 
         if (fname != null && !fname.trim().isEmpty()) {
@@ -61,7 +59,14 @@ public class ApiClient {
                             "\n" +
                             response.body());
         }
-        return mapper.readValue(response.body(), new TypeReference<>() {});
+        List<Delivery> output = mapper.readValue(response.body(), new TypeReference<>() {});
+        output.sort(
+                Comparator.comparing(
+                                Delivery::getRouteOrder,
+                                Comparator.nullsLast(Integer::compareTo))
+                        .thenComparing(Delivery::getId)
+        );
+        return output;
     }
 
     public void addDelivery(Delivery d) throws Exception {
@@ -168,6 +173,26 @@ public class ApiClient {
                             response.body());
         }
         return mapper.readValue(response.body(), GeocodeResult.class);
+    }
+
+    public void routeDeliveries(List<Integer> deliveryIds) throws Exception {
+        RouteRequest requestBody = new RouteRequest();
+        requestBody.setDeliveryIds(deliveryIds);
+        String json = mapper.writeValueAsString(requestBody);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/routes/generate"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() > 204) {
+            throw new RuntimeException(
+                    "API Error: " +
+                            response.statusCode() +
+                            "\n" +
+                            response.body());
+        }
     }
 
 }

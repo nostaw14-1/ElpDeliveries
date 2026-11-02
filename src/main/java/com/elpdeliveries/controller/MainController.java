@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.elpdeliveries.model.DeliveryView.TODAY;
@@ -74,31 +75,10 @@ public class MainController {
     @FXML
     private Tab routedTab;
     private DeliveryView currentView = TODAY;
-    private DBConnection dao;
     private Delivery selectedDelivery;
 
     @FXML
     public void initialize() {
-        if (ConfigManager.exists()) {
-            try {
-                dao = new DBConnection();
-            } catch (Exception e) {
-                ErrorHandler.showError(e.getMessage(), e);
-                openSettings();
-            }
-            if (dao.getConnection() == null) {
-                openSettings();
-                try {
-                    dao = new DBConnection();
-                } catch (Exception e) {
-                    ErrorHandler.showError(e.getMessage(), e);
-                    openSettings();
-                }
-            }
-        } else {
-            ErrorHandler.showError("Please configure a database!", new RuntimeException());
-            openSettings();
-        }
 
         todayTab.setUserData(DeliveryView.TODAY);
         futureTab.setUserData(DeliveryView.FUTURE);
@@ -176,11 +156,8 @@ public class MainController {
     private void handleGenerateRoute() {
         try {
             List<Delivery> deliveries = deliveryTable.getItems();
-            List<Integer> orderedIds = VROS.optimiseRoute(deliveries,
-                    Double.parseDouble(ConfigManager.getDepotLat()),
-                    Double.parseDouble(ConfigManager.getDepotLong()));
-
-            dao.updateRouteOrders(orderedIds);
+            List<Integer> ids = deliveries.stream().map(Delivery::getId).toList();
+            ApiClient.getInstance().routeDeliveries(ids);
             performSearch();
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
@@ -188,10 +165,10 @@ public class MainController {
     }
 
     private void performSearch() {
-        Date date = null;
+        LocalDate date = null;
         Integer receiptNum = null;
         if (searchDatePicker.getValue() != null) {
-            date = Date.valueOf(searchDatePicker.getValue());
+            date = searchDatePicker.getValue();
             tabPane.getSelectionModel().selectLast();
         }
         if (!receiptField.getText().trim().isEmpty()) {
@@ -202,7 +179,7 @@ public class MainController {
 
     }
 
-    private void loadDeliveries(DeliveryView view, Date date, String fname, String lname, Integer receiptNum,
+    private void loadDeliveries(DeliveryView view, LocalDate date, String fname, String lname, Integer receiptNum,
                                 Boolean uncompleted) {
         try {
             DeliveryStats stats = ApiClient.getInstance().getStats();
@@ -266,13 +243,6 @@ public class MainController {
             stage.setTitle("Settings");
             stage.setScene(scene);
             stage.showAndWait();
-            if (dao != null) {
-                dao.close();
-            }
-            dao = new DBConnection();
-            if (deliveryTable != null) {
-                performSearch();
-            }
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
