@@ -41,18 +41,18 @@ public class SettingsController {
             if (ConfigManager.exists()) {
                 ipTf.setText(ConfigManager.getServer());
                 portTf.setText(ConfigManager.getPort());
-            }
-            SettingsDto settings = ApiClient.getInstance().getSettings();
-            if (settings != null) {
-                sqlServerTf.setText(settings.getSqlServer());
-                sqlUserTf.setText(settings.getSqlUsername());
-                sqlPwdPf.setText(settings.getSqlPassword());
-                bucketTf.setText(settings.getAwsBucket());
-                akTf.setText(settings.getAwsAccessKey());
-                skTf.setText(settings.getAwsSecretKey());
-                vroomTf.setText(settings.getVroomIp());
-                depotLatTf.setText(settings.getDepotLat().toString());
-                depotLongTf.setText(settings.getDepotLong().toString());
+                SettingsDto settings = ApiClient.getInstance().getSettings();
+                if (settings != null) {
+                    sqlServerTf.setText(settings.getSqlServer());
+                    sqlUserTf.setText(settings.getSqlUsername());
+                    sqlPwdPf.setText(settings.getSqlPassword());
+                    bucketTf.setText(settings.getAwsBucket());
+                    akTf.setText(settings.getAwsAccessKey());
+                    skTf.setText(settings.getAwsSecretKey());
+                    vroomTf.setText(settings.getVroomIp());
+                    depotLatTf.setText(settings.getDepotLat().toString());
+                    depotLongTf.setText(settings.getDepotLong().toString());
+                }
             }
 
         } catch (Exception e) {
@@ -64,6 +64,11 @@ public class SettingsController {
     private void handleSubmit() {
         try {
             ConfigManager.save(ipTf.getText(), portTf.getText());
+            if (sqlServerTf.getText().isBlank()) {
+                Stage stage = (Stage) ipTf.getScene().getWindow();
+                stage.close();
+                return;
+            }
             SettingsDto settings = new SettingsDto();
             settings.setSqlServer(sqlServerTf.getText());
             settings.setSqlUsername(sqlUserTf.getText());

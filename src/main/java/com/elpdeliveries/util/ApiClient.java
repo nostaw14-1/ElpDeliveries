@@ -26,7 +26,7 @@ public class ApiClient {
     }
 
     public Exception createException(ApiError error, Integer code) {
-        return new RuntimeException(error.getMessage() + code);
+        return new RuntimeException("Api Error: " + code + "\n" + error.getMessage());
     }
 
     public List<Delivery> getDeliveries(DeliveryView view, LocalDate date, String fname,
