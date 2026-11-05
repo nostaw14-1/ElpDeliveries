@@ -24,7 +24,10 @@ public class Delivery {
     private String notes;
     private String receiptId;
     private String photo;
-    private Boolean completed;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @JsonIgnore
+    private BooleanProperty completed = new SimpleBooleanProperty();
     private String completedBy;
     private LocalDate completedDate;
     private Boolean handedToCustomer;
@@ -54,7 +57,7 @@ public class Delivery {
         this.notes = notes;
         this.receiptId = receiptId;
         this.photo = photo;
-        this.completed = completed;
+        this.completed.set(completed);
         this.completedBy = completedBy;
         this.completedDate = completedDate;
         this.handedToCustomer = handedToCustomer;
@@ -81,7 +84,7 @@ public class Delivery {
         this.notes = notes;
         this.receiptId = receiptId;
         this.photo = photo;
-        this.completed = completed;
+        this.completed.set(completed);
         this.completedBy = completedBy;
         this.completedDate = completedDate;
         this.handedToCustomer = handedToCustomer;
@@ -104,6 +107,21 @@ public class Delivery {
     @JsonSetter("includedInRoute")
     public void setIncludedInRoute(Boolean value) {
         includedInRoute.set(Boolean.TRUE.equals(value));
+    }
+
+    @JsonIgnore
+    public BooleanProperty completedProperty() {
+        return completed;
+    }
+
+    @JsonGetter("completed")
+    public Boolean getCompleted() {
+        return completed.get();
+    }
+
+    @JsonSetter("completed")
+    public void setCompleted(Boolean value) {
+        completed.set(Boolean.TRUE.equals(value));
     }
 
 }

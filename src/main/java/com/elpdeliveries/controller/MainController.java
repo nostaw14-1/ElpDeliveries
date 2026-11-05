@@ -107,8 +107,7 @@ public class MainController {
         lnameCol.setCellValueFactory(new PropertyValueFactory<>("lname"));
         addrCol.setCellValueFactory(new PropertyValueFactory<>("addr"));
         dfdCol.setCellValueFactory(new PropertyValueFactory<>("dlvDate"));
-        completedCol.setCellValueFactory(cellData -> cellData.getValue().includedInRouteProperty());
-
+        completedCol.setCellValueFactory(cellData -> cellData.getValue().completedProperty());
         completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
         deliverCol.setCellValueFactory(cellData -> cellData.getValue().includedInRouteProperty());
         deliverCol.setCellFactory(_ -> new CheckBoxTableCell<>());
