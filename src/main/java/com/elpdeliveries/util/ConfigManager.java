@@ -57,40 +57,11 @@ public final class ConfigManager {
 
     public static synchronized void save(
             String server,
-            String port,
-            String database,
-            String username,
-            String password,
-            String sqlServer,
-            String sqlDatabase,
-            String sqlUsername,
-            String sqlPassword,
-            String awsAccessKey,
-            String awsSecretKey,
-            String bucket,
-            String vroomIp,
-            String depotLat,
-            String depotLong)
+            String port)
             throws IOException {
         Files.createDirectories(CONFIG_DIR);
         PROPERTIES.setProperty("server", server);
         PROPERTIES.setProperty("port", port);
-        PROPERTIES.setProperty("database", database);
-        PROPERTIES.setProperty("username", username);
-        PROPERTIES.setProperty("password", password);
-
-        PROPERTIES.setProperty("sqlServer", sqlServer);
-        PROPERTIES.setProperty("sqlDatabase", sqlDatabase);
-        PROPERTIES.setProperty("sqlUsername", sqlUsername);
-        PROPERTIES.setProperty("sqlPassword", sqlPassword);
-
-        PROPERTIES.setProperty("awsAccessKey", awsAccessKey);
-        PROPERTIES.setProperty("awsSecretKey", awsSecretKey);
-        PROPERTIES.setProperty("bucket", bucket);
-
-        PROPERTIES.setProperty("vroomIp", vroomIp);
-        PROPERTIES.setProperty("depotLat", depotLat);
-        PROPERTIES.setProperty("depotLong", depotLong);
 
         try (OutputStream out = Files.newOutputStream(CONFIG_FILE)) {
             PROPERTIES.store(out, "ELP DELIVERIES SETTINGS");
@@ -102,72 +73,11 @@ public final class ConfigManager {
         return PROPERTIES.getProperty(key);
     }
 
-    private static String get(
-            String key,
-            String defaultValue) {
-
-        return PROPERTIES.getProperty(
-                key,
-                defaultValue);
-    }
-
     public static String getServer() {
         return get("server");
     }
 
     public static String getPort() {
         return get("port");
-    }
-
-    public static String getDatabase() {
-        return get("database");
-    }
-
-    public static String getUsername() {
-        return get("username");
-    }
-
-    public static String getPassword() {
-        return get("password");
-    }
-
-    public static String getAwsAccessKey() {
-        return get("awsAccessKey", "");
-    }
-
-    public static String getAwsSecretKey() {
-        return get("awsSecretKey", "");
-    }
-
-    public static String getBucket() {
-        return get("bucket", "");
-    }
-
-    public static String getSqlServer() {
-        return get("sqlServer", "");
-    }
-
-    public static String getSqlDatabase() {
-        return get("sqlDatabase", "");
-    }
-
-    public static String getSqlUsername() {
-        return get("sqlUsername", "");
-    }
-
-    public static String getSqlPassword() {
-        return get("sqlPassword", "");
-    }
-
-    public static String getVroomIp() {
-        return get("vroomIp", "");
-    }
-
-    public static String getDepotLat() {
-        return get("depotLat", "");
-    }
-
-    public static String getDepotLong() {
-        return get("depotLong", "");
     }
 }

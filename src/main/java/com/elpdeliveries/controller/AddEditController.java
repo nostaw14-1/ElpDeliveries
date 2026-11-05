@@ -267,9 +267,8 @@ public class AddEditController {
             if (receiptTf.getText().isBlank()) {
                 return false;
             }
-
             PatientLookupDto foundPatient = ApiClient.getInstance().findPatientsById(receiptTf.getText().trim());
-            if (foundPatient.getItems().isEmpty()) {
+            if (foundPatient.getFirstName().isEmpty()) {
                 ErrorHandler.showError("No matches found", new Exception("No matches found"));
                 return false;
             }

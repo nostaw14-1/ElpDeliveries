@@ -78,7 +78,10 @@ public class MainController {
 
     @FXML
     public void initialize() {
-
+        if (!ConfigManager.exists()) {
+            ErrorHandler.showError("Please configure a database!", new RuntimeException());
+            openSettings();
+        }
         todayTab.setUserData(DeliveryView.TODAY);
         futureTab.setUserData(DeliveryView.FUTURE);
         allTab.setUserData(DeliveryView.ALL);

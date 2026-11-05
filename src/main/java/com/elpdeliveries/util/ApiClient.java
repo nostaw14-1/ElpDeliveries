@@ -15,11 +15,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ApiClient {
-    private static final String BASE_URL = "http://192.168.0.2:1924/api";
+    private static final String SERVER = URLEncoder.encode(ConfigManager.getServer(), StandardCharsets.UTF_8);
+    private static final String PORT = URLEncoder.encode(ConfigManager.getPort(), StandardCharsets.UTF_8);
+    private static final String BASE_URL = "http://"+ SERVER +":"+ PORT +"/api";
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
     private static final ApiClient INSTANCE = new ApiClient();
 
-    public static ApiClient getInstance() {return INSTANCE;}
+    public static ApiClient getInstance() {
+        return INSTANCE;
+    }
 
     public Exception createException(ApiError error, Integer code) {
         return new RuntimeException(error.getMessage() + code);
@@ -51,6 +55,7 @@ public class ApiClient {
             url += "&completed=false";
         }
         HttpResponse<String> response;
+        AppLogger.info(url);
         try (HttpClient client = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -177,8 +182,9 @@ public class ApiClient {
 
     public PatientLookupDto findPatientsById(String receiptId) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
+        String url = BASE_URL + "/patients/receipt/" + URLEncoder.encode(receiptId, StandardCharsets.UTF_8);
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/patients/receipt/" + URLEncoder.encode(receiptId, StandardCharsets.UTF_8)))
+                .uri(URI.create(url))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -210,6 +216,35 @@ public class ApiClient {
         }
         return mapper.readValue(response.body(), new TypeReference<>() {
         });
+    }
+
+    public SettingsDto getSettings() throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/settings"))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
+        }
+        return mapper.readValue(response.body(), SettingsDto.class);
+    }
+
+    public void updateSettings(SettingsDto settings) throws Exception {
+        String json = mapper.writeValueAsString(settings);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/settings"))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
+        }
     }
 
 }

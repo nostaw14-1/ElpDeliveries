@@ -3,6 +3,7 @@ package com.elpdeliveries.util;
 import java.io.File;
 import java.util.UUID;
 
+import com.elpdeliveries.model.SettingsDto;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -18,9 +19,10 @@ public class S3Uploader {
 
     public static String upload(File file) {
         try {
-            BUCKET = ConfigManager.getBucket();
-            ACCESS_KEY = ConfigManager.getAwsAccessKey();
-            SECRET_KEY = ConfigManager.getAwsSecretKey();
+            SettingsDto settings = ApiClient.getInstance().getSettings();
+            BUCKET = settings.getAwsBucket();
+            ACCESS_KEY = settings.getAwsAccessKey();
+            SECRET_KEY = settings.getAwsSecretKey();
         } catch (Exception e) {
             AppLogger.error(e.getMessage(), e);
         }
