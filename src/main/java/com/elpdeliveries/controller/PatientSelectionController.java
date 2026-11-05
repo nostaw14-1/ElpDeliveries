@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
+import lombok.Getter;
 
 public class PatientSelectionController {
 
@@ -31,6 +32,7 @@ public class PatientSelectionController {
     @FXML
     private TableColumn<Patient, String> addressCol;
 
+    @Getter
     private Patient selectedPatient;
 
     @FXML
@@ -55,10 +57,6 @@ public class PatientSelectionController {
     public void setPatients(List<Patient> patients) {
         patientTable.setItems(
                 FXCollections.observableArrayList(patients));
-    }
-
-    public Patient getSelectedPatient() {
-        return selectedPatient;
     }
 
     @FXML

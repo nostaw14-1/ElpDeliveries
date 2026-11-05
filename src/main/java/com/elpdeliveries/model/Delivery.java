@@ -1,9 +1,11 @@
 package com.elpdeliveries.model;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -29,7 +31,10 @@ public class Delivery {
     private Double latitude;
     private Double longitude;
     private Integer routeOrder;
-    private final BooleanProperty includedInRoute = new SimpleBooleanProperty(true);
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @JsonIgnore
+    private final BooleanProperty includedInRoute = new SimpleBooleanProperty();
 
     public Delivery(Integer id, LocalDate createdDate, LocalDate dlvDate,
                     String fname, String lname, String phnum, String homePhone,
@@ -86,16 +91,19 @@ public class Delivery {
         this.includedInRoute.set(includedInRoute);
     }
 
+    @JsonIgnore
     public BooleanProperty includedInRouteProperty() {
         return includedInRoute;
     }
 
-    public Boolean isIncludedInRoute() {
+    @JsonGetter("includedInRoute")
+    public Boolean getIncludedInRoute() {
         return includedInRoute.get();
     }
 
+    @JsonSetter("includedInRoute")
     public void setIncludedInRoute(Boolean value) {
-        includedInRoute.set(value);
+        includedInRoute.set(Boolean.TRUE.equals(value));
     }
 
 }

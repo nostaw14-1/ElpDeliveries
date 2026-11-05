@@ -8,12 +8,12 @@ import java.util.Locale;
 
 @Setter
 @Getter
-public class ReceiptItem {
+public class ReceiptItemDto {
     private String description;
-    private int quantity;
-    private double price;
+    private int qty;
+    private double sellPrice;
 
     public String getPriceString() {
-        return NumberFormat.getCurrencyInstance(Locale.of("en", "AU")).format(price);
+        return NumberFormat.getCurrencyInstance(Locale.of("en", "AU")).format(sellPrice);
     }
 }

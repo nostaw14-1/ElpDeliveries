@@ -52,13 +52,13 @@ public class AddEditController {
     @FXML
     private BorderPane photoPane;
     @FXML
-    private TableView<ReceiptItem> itemsTable;
+    private TableView<ReceiptItemDto> itemsTable;
     @FXML
-    private TableColumn<ReceiptItem, Integer> qtyCol;
+    private TableColumn<ReceiptItemDto, Integer> qtyCol;
     @FXML
-    private TableColumn<ReceiptItem, String> itemCol;
+    private TableColumn<ReceiptItemDto, String> itemCol;
     @FXML
-    private TableColumn<ReceiptItem, String> priceCol;
+    private TableColumn<ReceiptItemDto, String> priceCol;
     private String photoPath;
     private ImageView imageView;
     private Delivery delivery;
@@ -70,7 +70,7 @@ public class AddEditController {
     @FXML
     private void initialize() {
         Platform.runLater(() -> receiptTf.requestFocus());
-        qtyCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("quantity"));
+        qtyCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("qty"));
         itemCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("description"));
         priceCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("priceString"));
         itemsTable.setPlaceholder(new Text("Items not available"));
@@ -108,7 +108,7 @@ public class AddEditController {
             showImage(photoPath);
         }
         try {
-            ReceiptLookupResult items = new PatientDBConnection().findPatientsById(delivery.getReceiptId());
+            PatientLookupDto items = ApiClient.getInstance().findPatientsById(delivery.getReceiptId());
             itemsTable.setItems(FXCollections.observableArrayList(items.getItems()));
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
@@ -262,25 +262,29 @@ public class AddEditController {
     }
 
     @FXML
-    private boolean handleFillFromId() throws Exception {
-            PatientDBConnection patientDao = new PatientDBConnection();
+    private boolean handleFillFromId() {
+        try {
             if (receiptTf.getText().isBlank()) {
                 return false;
             }
 
-            ReceiptLookupResult foundPatients = patientDao.findPatientsById(receiptTf.getText().trim());
-            if (foundPatients.getItems().isEmpty()) {
+            PatientLookupDto foundPatient = ApiClient.getInstance().findPatientsById(receiptTf.getText().trim());
+            if (foundPatient.getItems().isEmpty()) {
                 ErrorHandler.showError("No matches found", new Exception("No matches found"));
                 return false;
             }
-            Patient patient = foundPatients.getPatient();
-            fnameTf.setText(patient.getFirstName());
-            lnameTf.setText(patient.getSurname());
-            phoneTf.setText(patient.getMobileNumber());
-            homePhoneTf.setText(patient.getPhoneNumber());
-            addrTa.setText(patient.getHomeAddress() + ", " + patient.getHomeSuburb());
-            itemsTable.setItems(FXCollections.observableArrayList(foundPatients.getItems()));
+            fnameTf.setText(foundPatient.getFirstName());
+            lnameTf.setText(foundPatient.getSurname());
+            phoneTf.setText(foundPatient.getMobileNumber());
+            homePhoneTf.setText(foundPatient.getPhoneNumber());
+            addrTa.setText(foundPatient.getHomeAddress() + ", " + foundPatient.getHomeSuburb());
+            itemsTable.setItems(FXCollections.observableArrayList(foundPatient.getItems()));
             return true;
+        }
+        catch (Exception e) {
+            ErrorHandler.showError(e.getMessage(), e);
+            return false;
+        }
     }
 
     @FXML
@@ -288,12 +292,11 @@ public class AddEditController {
         itemsTable.getItems().clear();
 
         try {
-            PatientDBConnection patientDao = new PatientDBConnection();
             if (fnameTf.getText().isBlank() && lnameTf.getText().isBlank()) {
                 return;
             }
 
-            List<Patient> foundPatients = patientDao.findPatientsByName(fnameTf.getText(), lnameTf.getText());
+            List<Patient> foundPatients = ApiClient.getInstance().findPatientsByName(fnameTf.getText(), lnameTf.getText());
             if (foundPatients.isEmpty()) {
                 ErrorHandler.showError("No matches found", new Exception("No matches found"));
                 return;
@@ -321,8 +324,7 @@ public class AddEditController {
         }
     }
 
-    private Patient showPatientSelection(
-            List<Patient> patients) {
+    private Patient showPatientSelection(List<Patient> patients) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource(

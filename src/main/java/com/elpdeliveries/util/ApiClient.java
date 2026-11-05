@@ -21,6 +21,10 @@ public class ApiClient {
 
     public static ApiClient getInstance() {return INSTANCE;}
 
+    public Exception createException(ApiError error, Integer code) {
+        return new RuntimeException(error.getMessage() + code);
+    }
+
     public List<Delivery> getDeliveries(DeliveryView view, LocalDate date, String fname,
                                         String lname, Integer receiptId, Boolean uncompleted) throws Exception {
         String url = BASE_URL + "/deliveries/search";
@@ -51,12 +55,9 @@ public class ApiClient {
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         }
-        if (response.statusCode() >= 204) {
-            throw new RuntimeException(
-                    "API Error: " +
-                            response.statusCode() +
-                            "\n" +
-                            response.body());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
         }
         List<Delivery> output = mapper.readValue(response.body(), new TypeReference<>() {});
         output.sort(
@@ -70,6 +71,7 @@ public class ApiClient {
 
     public void addDelivery(Delivery d) throws Exception {
         String json = mapper.writeValueAsString(d);
+        AppLogger.info(json);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/deliveries"))
@@ -77,12 +79,9 @@ public class ApiClient {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() > 204) {
-            throw new RuntimeException(
-                    "API Error: " +
-                            response.statusCode() +
-                            "\n" +
-                            response.body());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
         } else {
             System.out.println(response.statusCode()+"");
         }
@@ -97,12 +96,9 @@ public class ApiClient {
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() > 204) {
-            throw new RuntimeException(
-                    "API Error: " +
-                            response.statusCode() +
-                            "\n" +
-                            response.body());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
         }
     }
 
@@ -113,12 +109,9 @@ public class ApiClient {
                 .DELETE()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() > 204) {
-            throw new RuntimeException(
-                    "API Error: " +
-                            response.statusCode() +
-                            "\n" +
-                            response.body());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
         }
     }
 
@@ -129,12 +122,9 @@ public class ApiClient {
                 .method("PATCH", HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() > 204) {
-            throw new RuntimeException(
-                    "API Error: " +
-                            response.statusCode() +
-                            "\n" +
-                            response.body());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
         }
     }
 
@@ -145,12 +135,9 @@ public class ApiClient {
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() > 204) {
-            throw new RuntimeException(
-                    "API Error: " +
-                            response.statusCode() +
-                            "\n" +
-                            response.body());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
         }
         return mapper.readValue(response.body(), DeliveryStats.class);
     }
@@ -164,12 +151,9 @@ public class ApiClient {
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() > 204) {
-            throw new RuntimeException(
-                    "API Error: " +
-                            response.statusCode() +
-                            "\n" +
-                            response.body());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
         }
         return mapper.readValue(response.body(), GeocodeResult.class);
     }
@@ -185,13 +169,47 @@ public class ApiClient {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() > 204) {
-            throw new RuntimeException(
-                    "API Error: " +
-                            response.statusCode() +
-                            "\n" +
-                            response.body());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
         }
+    }
+
+    public PatientLookupDto findPatientsById(String receiptId) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/patients/receipt/" + URLEncoder.encode(receiptId, StandardCharsets.UTF_8)))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 404) {
+            throw new RuntimeException("Patient not found for Receipt Number: " + receiptId);
+        }
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
+        }
+        return mapper.readValue(response.body(), PatientLookupDto.class);
+    }
+
+    public List<Patient> findPatientsByName(String firstName, String surname) throws Exception {
+        String url = BASE_URL + "/patients/search?firstName=" + URLEncoder.encode(firstName, StandardCharsets.UTF_8) +
+                "&surname=" + URLEncoder.encode(surname, StandardCharsets.UTF_8);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 404) {
+            throw new RuntimeException("No Matches Found");
+        }
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
+        }
+        return mapper.readValue(response.body(), new TypeReference<>() {
+        });
     }
 
 }
