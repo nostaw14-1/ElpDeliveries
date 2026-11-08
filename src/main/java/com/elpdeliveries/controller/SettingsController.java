@@ -11,10 +11,6 @@ import javafx.stage.Stage;
 public class SettingsController {
 
     @FXML
-    private TextField ipTf;
-    @FXML
-    private TextField portTf;
-    @FXML
     private TextField bucketTf;
     @FXML
     private TextField akTf;
@@ -27,34 +23,29 @@ public class SettingsController {
     @FXML
     private PasswordField sqlPwdPf;
     @FXML
-    private TextField vroomTf;
-    @FXML
     private TextField depotLatTf;
     @FXML
     private TextField depotLongTf;
     @FXML
     private TextField addrTf;
+    @FXML
+    private TextField vroomTf;
 
     @FXML
     public void initialize() {
         try {
-            if (ConfigManager.exists()) {
-                ipTf.setText(ConfigManager.getServer());
-                portTf.setText(ConfigManager.getPort());
-                SettingsDto settings = ApiClient.getInstance().getSettings();
-                if (settings != null) {
-                    sqlServerTf.setText(settings.getSqlServer());
-                    sqlUserTf.setText(settings.getSqlUsername());
-                    sqlPwdPf.setText(settings.getSqlPassword());
-                    bucketTf.setText(settings.getAwsBucket());
-                    akTf.setText(settings.getAwsAccessKey());
-                    skTf.setText(settings.getAwsSecretKey());
-                    vroomTf.setText(settings.getVroomIp());
-                    depotLatTf.setText(settings.getDepotLat().toString());
-                    depotLongTf.setText(settings.getDepotLong().toString());
-                }
+            SettingsDto settings = ApiClient.getInstance().getSettings();
+            if (settings != null) {
+                sqlServerTf.setText(settings.getSqlServer());
+                sqlUserTf.setText(settings.getSqlUsername());
+                sqlPwdPf.setText(settings.getSqlPassword());
+                bucketTf.setText(settings.getAwsBucket());
+                akTf.setText(settings.getAwsAccessKey());
+                skTf.setText(settings.getAwsSecretKey());
+                depotLatTf.setText(settings.getDepotLat().toString());
+                depotLongTf.setText(settings.getDepotLong().toString());
+                vroomTf.setText(settings.getVroomIp());
             }
-
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
@@ -63,25 +54,19 @@ public class SettingsController {
     @FXML
     private void handleSubmit() {
         try {
-            ConfigManager.save(ipTf.getText(), portTf.getText());
-            if (sqlServerTf.getText().isBlank()) {
-                Stage stage = (Stage) ipTf.getScene().getWindow();
-                stage.close();
-                return;
-            }
             SettingsDto settings = new SettingsDto();
             settings.setSqlServer(sqlServerTf.getText());
             settings.setSqlUsername(sqlUserTf.getText());
             settings.setSqlPassword(sqlPwdPf.getText());
-            settings.setVroomIp(vroomTf.getText());
             settings.setDepotLat(Double.parseDouble(depotLatTf.getText().trim()));
             settings.setDepotLong(Double.parseDouble(depotLongTf.getText().trim()));
             settings.setAwsBucket(bucketTf.getText());
             settings.setAwsAccessKey(akTf.getText());
             settings.setAwsSecretKey(skTf.getText());
+            settings.setVroomIp(vroomTf.getText());
             ApiClient.getInstance().updateSettings(settings);
 
-            Stage stage = (Stage) ipTf.getScene().getWindow();
+            Stage stage = (Stage) sqlServerTf.getScene().getWindow();
             stage.close();
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);

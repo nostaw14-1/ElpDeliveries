@@ -107,7 +107,7 @@ public class ApiClient {
     }
 
     public void deleteDelivery(Integer id) throws Exception {
-
+    
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/deliveries/" + id))
                 .DELETE()

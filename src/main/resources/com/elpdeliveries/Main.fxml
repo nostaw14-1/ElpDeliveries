@@ -35,7 +35,7 @@
                         <Tab fx:id="routedTab" text="Routed" />
                     </tabs>
                   </TabPane>
-                  <TableView fx:id="deliveryTable" editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                  <TableView fx:id="deliveryTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                     <columns>
                       <TableColumn fx:id="idCol" editable="false" resizable="false" sortable="false" text="#" />
                         <TableColumn fx:id="rteCol" editable="false" resizable="false" sortable="false" text="Rte #" />

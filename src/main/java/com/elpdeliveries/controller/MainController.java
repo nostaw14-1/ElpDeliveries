@@ -11,6 +11,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -117,6 +120,25 @@ public class MainController {
 
         deliveryTable.getSelectionModel().selectedItemProperty()
                 .addListener((_, _, newSelection) -> showPreview(newSelection));
+        deliveryTable.setOnKeyPressed((KeyEvent event) -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                Delivery selectedItem = deliveryTable.getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    handleEdit();
+                    event.consume();
+                }
+            }
+        });
+        deliveryTable.setRowFactory(_ -> {
+            TableRow<Delivery> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                    handleEdit();
+                    event.consume();
+                }
+            });
+            return row;
+        });
 
     }
 
@@ -237,7 +259,7 @@ public class MainController {
 
     public void openSettings() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/elpdeliveries/Settings.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/elpdeliveries/ApiSettings.fxml"));
             Scene scene = new Scene(loader.load());
             Stage stage = new Stage();
             stage.setTitle("Settings");
