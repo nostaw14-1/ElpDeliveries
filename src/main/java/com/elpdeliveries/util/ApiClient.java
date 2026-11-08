@@ -155,11 +155,18 @@ public class ApiClient {
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(response.statusCode()+"");
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
         }
-        return mapper.readValue(response.body(), GeocodeResult.class);
+        try {
+            return mapper.readValue(response.body(), GeocodeResult.class);
+        } catch (Exception e) {
+            AppLogger.info(response.body());
+            ErrorHandler.showError(e.getMessage(), e);
+        }
+        return null;
     }
 
     public void routeDeliveries(List<Integer> deliveryIds) throws Exception {
