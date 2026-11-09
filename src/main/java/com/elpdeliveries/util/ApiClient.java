@@ -32,7 +32,7 @@ public class ApiClient {
     }
 
     public List<Delivery> getDeliveries(DeliveryView view, LocalDate date, String fname,
-                                        String lname, Integer receiptId, Boolean uncompleted) throws Exception {
+                                        String lname, String receiptId, Boolean uncompleted) throws Exception {
         String url = BASE_URL + "/deliveries/search";
 
         url += "?view=" + view.toString();
@@ -50,7 +50,7 @@ public class ApiClient {
         }
 
         if (receiptId != null) {
-            url += "&receiptId=" + URLEncoder.encode(String.valueOf(receiptId), StandardCharsets.UTF_8);
+            url += "&receiptId=" + URLEncoder.encode(receiptId, StandardCharsets.UTF_8);
         }
 
         if (Boolean.TRUE.equals(uncompleted)) {
@@ -169,11 +169,8 @@ public class ApiClient {
         return null;
     }
 
-    public void routeDeliveries(List<Integer> deliveryIds) throws Exception {
-        RouteRequest requestBody = new RouteRequest();
-        requestBody.setDeliveryIds(deliveryIds);
+    public RouteResponse routeDeliveries(RouteRequest requestBody) throws Exception {
         String json = mapper.writeValueAsString(requestBody);
-
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/routes/generate"))
                 .header("Content-Type", "application/json")
@@ -184,6 +181,7 @@ public class ApiClient {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
         }
+        return mapper.readValue(response.body(), RouteResponse.class);
     }
 
     public PatientLookupDto findPatientsById(String receiptId) throws Exception {
@@ -245,6 +243,83 @@ public class ApiClient {
                 .uri(URI.create(BASE_URL + "/settings"))
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
+        }
+    }
+
+    public List<StaffDto> getStaff() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/staff"))
+                .GET()
+                .build();
+        HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
+        }
+        return mapper.readValue(response.body(), new TypeReference<>() {});
+    }
+
+    public List<RouteDto> getRoutes() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/routes"))
+                .GET()
+                .build();
+        HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
+        }
+        return mapper.readValue(response.body(), new TypeReference<>() {});
+    }
+
+    public List<Delivery> getRouteDeliveries(Long routeId, LocalDate date, String fname,
+                                        String lname, String receiptId, Boolean uncompleted) throws Exception {
+        String url = BASE_URL + "/routes/" + routeId + "/deliveries";
+
+        if (date != null) {
+            url += url.contains("?") ? "&" : "?";
+            url += "dlvDate=" + date;
+        }
+
+        if (fname != null && !fname.trim().isEmpty()) {
+            url += url.contains("?") ? "&" : "?";
+            url += "firstName=" + URLEncoder.encode(fname, StandardCharsets.UTF_8);
+        }
+
+        if (lname != null && !lname.trim().isEmpty()) {
+            url += url.contains("?") ? "&" : "?";
+            url += "surname=" + URLEncoder.encode(lname, StandardCharsets.UTF_8);
+        }
+
+        if (receiptId != null) {
+            url += url.contains("?") ? "&" : "?";
+            url += "receiptId=" + URLEncoder.encode(receiptId, StandardCharsets.UTF_8);
+        }
+
+        if (Boolean.TRUE.equals(uncompleted)) {
+            url += url.contains("?") ? "&" : "?";
+            url += "completed=false";
+        }
+        HttpResponse<String> response;
+        AppLogger.info(url);
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+        response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 400) {
+            ApiError error = mapper.readValue(response.body(), ApiError.class);
+            throw createException(error, response.statusCode());
+        }
+        return mapper.readValue(response.body(), new TypeReference<>() {});
+    }
+
+    public void deleteRoute(Long routeId) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/routes/" + routeId))
+                .DELETE()
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() >= 400) {

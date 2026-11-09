@@ -1,8 +1,6 @@
 package com.elpdeliveries.controller;
 
-import com.elpdeliveries.model.Delivery;
-import com.elpdeliveries.model.DeliveryStats;
-import com.elpdeliveries.model.DeliveryView;
+import com.elpdeliveries.model.*;
 import com.elpdeliveries.util.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -19,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.elpdeliveries.model.DeliveryView.TODAY;
@@ -76,6 +75,22 @@ public class MainController {
     private Tab allTab;
     @FXML
     private Tab routedTab;
+    @FXML
+    private TableView<RouteDto> routesTable;
+    @FXML
+    private TableColumn<RouteDto, Integer> routeIdCol;
+    @FXML
+    private TableColumn<RouteDto, String> routeDriverNameCol;
+    @FXML
+    private TableColumn<RouteDto, Integer> routeDeliveryCountCol;
+    @FXML
+    private TableColumn<RouteDto, LocalDateTime> routeCreatedCol;
+    @FXML
+    private TableColumn<RouteDto, String> routeStatusCol;
+    @FXML
+    private TableColumn<RouteDto, Void> deleteCol;
+    @FXML
+    private Label deliveriesForRouteLabel;
     private DeliveryView currentView = TODAY;
     private Delivery selectedDelivery;
 
@@ -88,24 +103,51 @@ public class MainController {
         todayTab.setUserData(DeliveryView.TODAY);
         futureTab.setUserData(DeliveryView.FUTURE);
         allTab.setUserData(DeliveryView.ALL);
-        routedTab.setUserData(DeliveryView.ROUTED);
+        routedTab.setUserData(DeliveryView.ALL);
+
+        routesTable.setVisible(false);
+        routesTable.setManaged(false);
+        deliveriesForRouteLabel.setVisible(false);
+        deliveriesForRouteLabel.setManaged(false);
 
         deliveryTable.setPlaceholder(new Text("No deliveries to show"));
+        routesTable.setPlaceholder(new Text("No routes to show"));
         loadDeliveries(currentView);
 
         tabPane.getSelectionModel().selectedItemProperty().addListener((_, _, newTab) -> {
             currentView = (DeliveryView) newTab.getUserData();
-            performSearch();
+            boolean routesSelected = newTab == routedTab;
+            routesTable.setVisible(routesSelected);
+            routesTable.setManaged(routesSelected);
+            deliveriesForRouteLabel.setVisible(routesSelected);
+            deliveriesForRouteLabel.setManaged(routesSelected);
+            if (routesSelected) {
+                deliverCol.setVisible(false);
+                rteCol.setVisible(true);
+                loadRoutes();
+                if (!routesTable.getItems().isEmpty()) {
+                    routesTable.getSelectionModel().selectFirst();
+                } else {
+                    deliveryTable.setItems(null);
+                }
+            } else {
+                rteCol.setVisible(false);
+                deliverCol.setVisible(true);
+                performSearch();
+            }
+
         });
 
         idCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.05));
-        rteCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.05));
+
         fnameCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.12));
         lnameCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.12));
-        addrCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.30));
+        addrCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.35));
         dfdCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.16));
-        deliverCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.10));
         completedCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.095));
+        deliverCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.10));
+        rteCol.prefWidthProperty().bind(deliveryTable.widthProperty().multiply(0.10));
+
 
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         rteCol.setCellValueFactory(new PropertyValueFactory<>("routeOrder"));
@@ -140,6 +182,53 @@ public class MainController {
             return row;
         });
 
+        routeIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        routeDriverNameCol.setCellValueFactory(new PropertyValueFactory<>("staffName"));
+        routeCreatedCol.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
+        routeStatusCol.setCellValueFactory(new PropertyValueFactory<>("routeStatus"));
+        routeDeliveryCountCol.setCellValueFactory(new PropertyValueFactory<>("stopCount"));
+
+        deleteCol.setCellFactory(_ -> new TableCell<>() {
+            private final Button btn = new Button("Delete");
+
+            {
+                btn.setOnAction(_ -> {
+                    RouteDto selectedRoute = getTableView().getItems().get(getIndex());
+                    handleDeleteRoute(selectedRoute.getId());
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    btn.prefWidthProperty().bind(getTableColumn().widthProperty().subtract(10));
+                    btn.prefHeightProperty().bind(getTableRow().heightProperty().subtract(10));
+                    setGraphic(btn);
+                }
+            }
+        });
+
+
+        routesTable.getSelectionModel().selectedItemProperty().addListener((_, _, newRoute) -> {
+            if (newRoute == null) {
+                deliveryTable.setItems(null);
+                return;
+            }
+            loadRouteDeliveries(newRoute.getId());
+        });
+
+    }
+
+    private void handleDeleteRoute(Long id) {
+        try {
+            ApiClient.getInstance().deleteRoute(id);
+            loadRoutes();
+        } catch (Exception e) {
+            ErrorHandler.showError(e.getMessage(), e);
+        }
     }
 
     @FXML
@@ -179,8 +268,10 @@ public class MainController {
         try {
             List<Delivery> deliveries = deliveryTable.getItems();
             List<Integer> ids = deliveries.stream().map(Delivery::getId).toList();
-            ApiClient.getInstance().routeDeliveries(ids);
+            StaffDto driver = showStaffSelection();
+            RouteResponse routeInfo = ApiClient.getInstance().routeDeliveries(new RouteRequest(ids, driver.id()));
             performSearch();
+            showDeliveryConfirmation(routeInfo);
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
@@ -188,20 +279,31 @@ public class MainController {
 
     private void performSearch() {
         LocalDate date = null;
-        Integer receiptNum = null;
+        String receiptNum = null;
+        if (!receiptField.getText().trim().isEmpty()) {
+            receiptNum = receiptField.getText();
+        }
         if (searchDatePicker.getValue() != null) {
             date = searchDatePicker.getValue();
             tabPane.getSelectionModel().selectLast();
         }
-        if (!receiptField.getText().trim().isEmpty()) {
-            receiptNum = Integer.parseInt(receiptField.getText());
+        if (tabPane.getSelectionModel().getSelectedItem() == routedTab) {
+            loadRouteDeliveries(
+                    routesTable.getSelectionModel().getSelectedItem().getId(),
+                    date,
+                    fnameField.getText(),
+                    lnameField.getText(),
+                    receiptNum,
+                    uncompletedCB.isSelected());
+        } else {
+            loadDeliveries(currentView, date, fnameField.getText(), lnameField.getText(), receiptNum,
+                    uncompletedCB.isSelected());
         }
-        loadDeliveries(currentView, date, fnameField.getText(), lnameField.getText(), receiptNum,
-                uncompletedCB.isSelected());
+
 
     }
 
-    private void loadDeliveries(DeliveryView view, LocalDate date, String fname, String lname, Integer receiptNum,
+    private void loadDeliveries(DeliveryView view, LocalDate date, String fname, String lname, String receiptNum,
                                 Boolean uncompleted) {
         try {
             DeliveryStats stats = ApiClient.getInstance().getStats();
@@ -229,6 +331,35 @@ public class MainController {
 
     private void loadDeliveries(DeliveryView view) {
         loadDeliveries(view, null, null, null, null, null);
+    }
+
+    private void loadRoutes() {
+        try {
+            List<RouteDto> routes = ApiClient.getInstance().getRoutes();
+            routesTable.setItems(FXCollections.observableArrayList(routes));
+        } catch (Exception e) {
+            ErrorHandler.showError(e.getMessage(), e);
+        }
+    }
+
+    private void loadRouteDeliveries(Long routeId, LocalDate date, String fname, String lname, String receiptNum,
+                                     Boolean uncompleted) {
+        try {
+            List<Delivery> deliveries = ApiClient.getInstance().getRouteDeliveries(
+                    routeId,
+                    date,
+                    fname,
+                    lname,
+                    receiptNum,
+                    uncompleted);
+            deliveryTable.setItems(FXCollections.observableArrayList(deliveries));
+        } catch (Exception e) {
+            ErrorHandler.showError(e.getMessage(), e);
+        }
+    }
+
+    private void loadRouteDeliveries(Long routeId) {
+        loadRouteDeliveries(routeId, null, null, null, null, null);
     }
 
     private void openAddEdit(Delivery d) {
@@ -270,7 +401,7 @@ public class MainController {
         }
     }
 
-    public void showPreview(Delivery d) {
+    private void showPreview(Delivery d) {
         selectedDelivery = d;
         if (d == null) {
             receiptTf.clear();
@@ -284,4 +415,23 @@ public class MainController {
         homePhoneTf.setText(d.getHomePhone() == null ? "" : d.getHomePhone());
         dlvNotesTa.setText(d.getNotes() == null ? "" : d.getNotes());
     }
+
+    private StaffDto showStaffSelection() throws Exception {
+        List<StaffDto> staff = ApiClient.getInstance().getStaff();
+        ChoiceDialog<StaffDto> dialog = new ChoiceDialog<>(staff.getFirst(), staff);
+        dialog.setTitle("Route driver");
+        dialog.setHeaderText("Who will complete this route?");
+        dialog.setContentText("Staff:");
+        return dialog.showAndWait().orElse(null);
+    }
+
+    private void showDeliveryConfirmation(RouteResponse response) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("Created new route: " + response.getRouteId());
+        alert.setContentText("New Route:\nDriver: " + response.getDriverName() +
+                "\nDeliveries: " + response.getDeliveryCount());
+        alert.showAndWait();
+    }
+
+
 }

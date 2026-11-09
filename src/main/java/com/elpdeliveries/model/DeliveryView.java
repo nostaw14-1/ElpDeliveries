@@ -4,5 +4,4 @@ public enum DeliveryView {
     ALL,
     TODAY,
     FUTURE,
-    ROUTED
 }
