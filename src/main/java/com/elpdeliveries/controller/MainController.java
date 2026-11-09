@@ -2,6 +2,7 @@ package com.elpdeliveries.controller;
 
 import com.elpdeliveries.model.*;
 import com.elpdeliveries.util.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -130,6 +131,7 @@ public class MainController {
                 } else {
                     deliveryTable.setItems(null);
                 }
+                Platform.runLater(() -> routesTable.requestFocus());
             } else {
                 rteCol.setVisible(false);
                 deliverCol.setVisible(true);
@@ -269,6 +271,7 @@ public class MainController {
             List<Delivery> deliveries = deliveryTable.getItems();
             List<Integer> ids = deliveries.stream().map(Delivery::getId).toList();
             StaffDto driver = showStaffSelection();
+            if (driver == null) return;
             RouteResponse routeInfo = ApiClient.getInstance().routeDeliveries(new RouteRequest(ids, driver.id()));
             performSearch();
             showDeliveryConfirmation(routeInfo);
@@ -285,7 +288,7 @@ public class MainController {
         }
         if (searchDatePicker.getValue() != null) {
             date = searchDatePicker.getValue();
-            tabPane.getSelectionModel().selectLast();
+            tabPane.getSelectionModel().select(allTab);
         }
         if (tabPane.getSelectionModel().getSelectedItem() == routedTab) {
             loadRouteDeliveries(
@@ -295,6 +298,7 @@ public class MainController {
                     lnameField.getText(),
                     receiptNum,
                     uncompletedCB.isSelected());
+
         } else {
             loadDeliveries(currentView, date, fnameField.getText(), lnameField.getText(), receiptNum,
                     uncompletedCB.isSelected());
@@ -353,6 +357,7 @@ public class MainController {
                     receiptNum,
                     uncompleted);
             deliveryTable.setItems(FXCollections.observableArrayList(deliveries));
+            countLabel.setText("Showing " + deliveryTable.getItems().size() + " Deliveries");
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
@@ -362,12 +367,13 @@ public class MainController {
         loadRouteDeliveries(routeId, null, null, null, null, null);
     }
 
-    private void openAddEdit(Delivery d) {
+    private void openAddEdit(Delivery d, LocalDate date) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/elpdeliveries/AddEdit.fxml"));
             Scene scene = new Scene(loader.load());
             AddEditController controller = loader.getController();
             Stage stage = new Stage();
+            if (date != null) controller.setDate(date);
             if (d != null) {
                 controller.setDelivery(d);
                 stage.setTitle("Editing delivery " + d.getId());
@@ -376,9 +382,9 @@ public class MainController {
                 stage.setTitle("Adding new delivery");
             }
             controller.setOnSave(this::performSearch);
-            controller.setOnSaveAndContinue(() -> {
+            controller.setOnSaveAndContinue(continueDate -> {
                 performSearch();
-                openAddEdit(null);
+                openAddEdit(null, continueDate);
             });
             stage.setScene(scene);
             stage.showAndWait();
@@ -386,6 +392,10 @@ public class MainController {
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
+    }
+
+    public void openAddEdit(Delivery d) {
+        openAddEdit(d, null);
     }
 
     public void openSettings() {
@@ -428,7 +438,7 @@ public class MainController {
     private void showDeliveryConfirmation(RouteResponse response) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("Created new route: " + response.getRouteId());
-        alert.setContentText("New Route:\nDriver: " + response.getDriverName() +
+        alert.setContentText("Driver: " + response.getDriverName() +
                 "\nDeliveries: " + response.getDeliveryCount());
         alert.showAndWait();
     }

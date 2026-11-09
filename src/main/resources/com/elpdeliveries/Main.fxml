@@ -37,7 +37,7 @@
                <TableColumn fx:id="routeDeliveryCountCol" prefWidth="90.0" text="Stops" />
                <TableColumn fx:id="routeCreatedCol" prefWidth="150.0" text="Date Created" />
                <TableColumn fx:id="routeStatusCol" prefWidth="90.0" text="Status" />
-               <TableColumn fx:id="deleteCol" prefWidth="90.0" text="Delete" />
+               <TableColumn fx:id="deleteCol" prefWidth="90.0" text=" " />
            </columns>
          </TableView>
          <Label fx:id="deliveriesForRouteLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" style="-fx-font-weight: bold;" text="Deliveries For Route:">

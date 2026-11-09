@@ -19,6 +19,7 @@ import lombok.Setter;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AddEditController {
     @FXML
@@ -65,7 +66,7 @@ public class AddEditController {
     @Setter
     private Runnable onSave;
     @Setter
-    private Runnable onSaveAndContinue;
+    private Consumer<LocalDate> onSaveAndContinue;
 
     @FXML
     private void initialize() {
@@ -345,21 +346,22 @@ public class AddEditController {
     @FXML
     public void handleReceiptScanned() {
         try {
-            if (!handleFillFromId()) {
-                return;
-            }
-            if (!saveDelivery()) {
-                return;
-            }
+            if (!handleFillFromId()) return;
+            if (!saveDelivery()) return;
+            LocalDate continueDate = dfdDatePicker.getValue();
             closeWindow();
             Platform.runLater(() -> {
                 if (onSaveAndContinue != null) {
-                    onSaveAndContinue.run();
+                    onSaveAndContinue.accept(continueDate);
                 }
             });
 
         } catch (Exception e) {
             ErrorHandler.showError(e.getMessage(), e);
         }
+    }
+
+    public void setDate(LocalDate date) {
+        Platform.runLater(() -> dfdDatePicker.setValue(date));
     }
 }

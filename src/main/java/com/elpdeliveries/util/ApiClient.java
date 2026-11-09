@@ -57,9 +57,9 @@ public class ApiClient {
             url += "&completed=false";
         }
         HttpResponse<String> response;
-        AppLogger.info(url);
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
         response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -75,14 +75,16 @@ public class ApiClient {
     }
 
     public void addDelivery(Delivery d) throws Exception {
+        String url = BASE_URL + "/deliveries";
         String json = mapper.writeValueAsString(d);
         AppLogger.info(json);
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/deliveries"))
+                .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -92,14 +94,16 @@ public class ApiClient {
     }
 
     public void updateDelivery(Delivery d) throws Exception {
+        String url = BASE_URL + "/deliveries/" + d.getId();
         String json = mapper.writeValueAsString(d);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/deliveries/" + d.getId()))
+                .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -107,12 +111,13 @@ public class ApiClient {
     }
 
     public void deleteDelivery(Integer id) throws Exception {
-    
+        String url = BASE_URL + "/deliveries/" + id;
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/deliveries/" + id))
+                .uri(URI.create(url))
                 .DELETE()
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -120,12 +125,13 @@ public class ApiClient {
     }
 
     public void updateIncludedInRoute(int id, boolean included) throws Exception {
-
+        String url = BASE_URL + "/deliveries/" + id + "/included-in-route?included=" + included;
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/deliveries/" + id + "/included-in-route?included=" + included))
+                .uri(URI.create(url))
                 .method("PATCH", HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -133,12 +139,13 @@ public class ApiClient {
     }
 
     public DeliveryStats getStats() throws Exception {
-
+        String url = BASE_URL + "/deliveries/stats";
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/deliveries/stats"))
+                .uri(URI.create(url))
                 .GET()
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -148,14 +155,14 @@ public class ApiClient {
 
     public GeocodeResult geocode(String address) throws Exception {
         String encoded = URLEncoder.encode(address, StandardCharsets.UTF_8);
-
+        String url = BASE_URL + "/geocode?addr=" + encoded;
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/geocode?addr=" + encoded))
+                .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        AppLogger.info(response.statusCode()+"");
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -171,12 +178,14 @@ public class ApiClient {
 
     public RouteResponse routeDeliveries(RouteRequest requestBody) throws Exception {
         String json = mapper.writeValueAsString(requestBody);
+        String url = BASE_URL + "/routes/generate";
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/routes/generate"))
+                .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -185,13 +194,13 @@ public class ApiClient {
     }
 
     public PatientLookupDto findPatientsById(String receiptId) throws Exception {
-
         String url = BASE_URL + "/patients/receipt/" + URLEncoder.encode(receiptId, StandardCharsets.UTF_8);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .GET()
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() == 404) {
             throw new RuntimeException("Patient not found for Receipt Number: " + receiptId);
         }
@@ -211,6 +220,7 @@ public class ApiClient {
                 .GET()
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() == 404) {
             throw new RuntimeException("No Matches Found");
         }
@@ -223,12 +233,13 @@ public class ApiClient {
     }
 
     public SettingsDto getSettings() throws Exception {
-
+        String url = BASE_URL + "/settings";
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/settings"))
+                .uri(URI.create(url))
                 .GET()
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -238,13 +249,14 @@ public class ApiClient {
 
     public void updateSettings(SettingsDto settings) throws Exception {
         String json = mapper.writeValueAsString(settings);
-
+        String url = BASE_URL + "/settings";
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/settings"))
+                .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -252,11 +264,13 @@ public class ApiClient {
     }
 
     public List<StaffDto> getStaff() throws Exception {
+        String url = BASE_URL + "/staff";
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/staff"))
+                .uri(URI.create(url))
                 .GET()
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -265,11 +279,13 @@ public class ApiClient {
     }
 
     public List<RouteDto> getRoutes() throws Exception {
+        String url = BASE_URL + "/routes";
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/routes"))
+                .uri(URI.create(url))
                 .GET()
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -306,9 +322,9 @@ public class ApiClient {
             url += "completed=false";
         }
         HttpResponse<String> response;
-        AppLogger.info(url);
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
         response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
@@ -317,11 +333,13 @@ public class ApiClient {
     }
 
     public void deleteRoute(Long routeId) throws Exception {
+        String url = BASE_URL + "/routes/" + routeId;
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/routes/" + routeId))
+                .uri(URI.create(url))
                 .DELETE()
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        AppLogger.info(url + " " + response.statusCode());
         if (response.statusCode() >= 400) {
             ApiError error = mapper.readValue(response.body(), ApiError.class);
             throw createException(error, response.statusCode());
