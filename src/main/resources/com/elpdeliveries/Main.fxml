@@ -54,7 +54,7 @@
                     <TableColumn fx:id="dfdCol" editable="false" resizable="false" sortable="false" text="Date for Delivery" />
                     <TableColumn fx:id="completedCol" editable="false" resizable="false" sortable="false" text="Completed" />
                     <TableColumn fx:id="deliverCol" resizable="false" sortable="false" text="Deliver?" />
-               <TableColumn fx:id="rteCol" prefWidth="75.0" text="Rte #" />
+               <TableColumn fx:id="rteCol" prefWidth="75.0" text="Rte #" visible="false" />
                 </columns>
             </TableView>
         </VBox>
